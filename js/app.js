@@ -1,3 +1,38 @@
+
+
+
+
+function showpage(sid)
+{
+	hidewin();
+	window.location.href="index.html#"+sid;
+}
+
+function openwin()
+ {
+ document.getElementById("navmenu").className="mytest";
+document.getElementById("navmenu").style.left=0+"px";
+ }
+ function hidewin()
+ {
+	 	
+
+var sw=parseInt( $(window).width()*2/3);
+document.getElementById("navmenu").style.left="-"+sw+"px";
+ }
+
+function init()
+{
+	var sw=parseInt( $(window).width()*2/3);	
+	document.getElementById("navmenu").style.width=sw+"px";
+   document.getElementById("navmenu").style.left="-"+sw+"px";
+   $("#page2").hide();
+   $("#page3").hide();
+   $("#page4").hide();
+	
+}
+
+
 var itbmobile = {
 
     views: {},
@@ -26,17 +61,41 @@ var itbmobile = {
 itbmobile.Router = Backbone.Router.extend({
 
     routes: {
-        "":                 "home"
+        "":                 "home",
+		"home":"home",
+		"timer":"timer",
+		"chatter":"chatter",
+		"setup":"setup"
     },
 
     initialize: function () {
         itbmobile.shellView = new itbmobile.ShellView();
         $('body').html(itbmobile.shellView.render().el);
         this.$content = $("#content");
+		
+		
+				
+$("#mainpage").bind("swiperight",function()
+	{
+		openwin();
+	}
+	);
+	
+	$("#mainpage").bind("swipeleft",function()
+	{
+		hidewin();
+	}
+	);
+	
+init();
+
+ 
+
     },
 
     home: function () {
         // Since the home view never changes, we instantiate it and render it only once
+	
         if (!itbmobile.homelView) {
             itbmobile.homelView = new itbmobile.HomeView();
             itbmobile.homelView.render();
@@ -44,10 +103,62 @@ itbmobile.Router = Backbone.Router.extend({
             console.log('reusing home view');
             itbmobile.homelView.delegateEvents(); // delegate events when the view is recycled
         }
-        this.$content.html(itbmobile.homelView.el);
+      $("body").append(itbmobile.homelView.el);
+	 $(".ipage").hide();
+		 $("#page1").show();
     }
+,
+chatter:function()
+{      
+	    if (!itbmobile.Chatter1View) {
+            itbmobile.Chatter1View = new itbmobile.ChatterView();
+            itbmobile.Chatter1View.render();
+        } else {
+            console.log('reusing home view');
+            itbmobile.Chatter1View.delegateEvents(); // delegate events when the view is recycled
+        }
+		 $("body").append(itbmobile.Chatter1View.el);
+		 $(".ipage").hide();
+		 $("#page2").show();
+},
+timer:function()
+{
+	
+		if (!itbmobile.Timer1View) {
+            itbmobile.Timer1View = new itbmobile.TimerView();
+            itbmobile.Timer1View.render();
+        } else {
+            console.log('reusing home view');
+            itbmobile.Timer1View.delegateEvents(); // delegate events when the view is recycled
+        }
 
-});
+		   $("body").append(itbmobile.Timer1View.el);
+	 $(".ipage").hide();
+		 $("#page3").show();
+}
+
+,
+setup:function(){
+	
+		    if (!itbmobile.Setup1View) {
+            itbmobile.Setup1View = new itbmobile.SetupView();
+            itbmobile.Setup1View.render();
+        } else {
+            console.log('reusing home view');
+            itbmobile.Setup1View.delegateEvents(); // delegate events when the view is recycled
+        }
+		
+		   $("body").append(itbmobile.Setup1View.el);
+	 $(".ipage").hide();
+	 
+		 $("#page4").show();
+}
+
+}
+
+
+
+);
 
 
 
@@ -94,7 +205,7 @@ function sessionCallback(oauthResponse) {
 }
 
 $(document).on("ready", function () {
-    itbmobile.loadTemplates(["HomeView", "ShellView"],
+    itbmobile.loadTemplates(["HomeView", "ShellView","ChatterView","TimerView","SetupView"],
         function () {
             itbmobile.router = new itbmobile.Router();
             Backbone.history.start();
