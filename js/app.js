@@ -48,10 +48,7 @@ itbmobile.Router = Backbone.Router.extend({
     }
 
 });
-
-
-
-    
+  
 /*
  * This code allows you to use the Force.com REST API sample from your own
  * server, using OAuth to obtain a session id.
@@ -81,32 +78,49 @@ function sessionCallback(oauthResponse) {
         client.setSessionToken(oauthResponse.access_token, null,
             oauthResponse.instance_url);
 
-        client.query("SELECT id, firstName, lastName FROM User where profileid = '00e20000000ors1' and isactive = true order by lastname limit 12", 
-          function(response){
-            for(var i = 0; i < response.records.length; i++) {
-                itbmobile.store.employees[i].firstName = response.records[i].FirstName;
-                itbmobile.store.employees[i].lastName = response.records[i].LastName;
-            }
+        client.getCurrentUser(function(response) {
+            alert(response.username);
         });
 
-        $('#loginli').hide();
+        /*
+        itbmobile.currentUser.Id = "005M0000004bc8xIAA";
+        itbmobile.currentUser.FirstName = "Lingjun";
+        itbmobile.currentUser.LastName = "Jiang";
+        client.query("SELECT Id, FirstName, LastName FROM ITBresource__c where OwnerId = '" + itbmobile.currentUser.Id + "' and Active__c = true", function(response) {
+            itbmobile.currentUserResource = null;
+            if (response.records == null || response.records.length == 0) {
+                // Resource doesn't exist for current user
+            } else if (response.records.length > 1) {
+                for (var r : response.records) {
+                    if (r.FirstName == itbmobile.currentUser.FirstName && r.LastName == itbmobile.currentUser.LastName) {
+                        // Resource record found
+                        itbmobile.currentUserResource = r;
+                        break;
+                    }
+                }
+            } else {
+                // Resource record found
+                itbmobile.currentUserResource = r;
+            }
+            
+            alert(r.FirstName);
+        });
+        */
+        
     }
 }
 
 $(document).on("ready", function () {
-    itbmobile.loadTemplates(["HomeView", "ShellView"],
-        function () {
-            itbmobile.router = new itbmobile.Router();
-            Backbone.history.start();
+    itbmobile.loadTemplates(["HomeView", "ShellView"], function () {
+        itbmobile.router = new itbmobile.Router();
+        Backbone.history.start();
 
-            // $('#login').popupWindow({ 
-            //     windowURL: getAuthorizeUrl(loginUrl, clientId, redirectUri),
-            //     windowName: 'Connect',
-            //     centerBrowser: 1,
-            //     height:524, 
-            //     width:675
-            // });
+        $(".icon-home").popupWindow({ 
+            windowURL: getAuthorizeUrl(loginUrl, clientId, redirectUri),
+            windowName: 'Connect',
+                centerBrowser: 1,
+                height:524, 
+                width:675
         });
-
-
+    });
 });
