@@ -5,7 +5,7 @@
 function showpage(sid)
 {
 	hidewin();
-	window.location.href="index.html#"+sid;
+	window.location.href="#"+sid;
 }
 
 function openwin()
