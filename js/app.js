@@ -161,40 +161,97 @@ function sessionCallback(oauthResponse) {
         client.setSessionToken(oauthResponse.access_token, null,
             oauthResponse.instance_url);
 
-        client.getCurrentUser(function(response) {
-            alert(response.username);
-        });
-
-        /*
-        itbmobile.currentUser.Id = "005M0000004bc8xIAA";
-        itbmobile.currentUser.FirstName = "Lingjun";
-        itbmobile.currentUser.LastName = "Jiang";
-        client.query("SELECT Id, FirstName, LastName FROM ITBresource__c where OwnerId = '" + itbmobile.currentUser.Id + "' and Active__c = true", function(response) {
-            itbmobile.currentUserResource = null;
-            if (response.records == null || response.records.length == 0) {
-                // Resource doesn't exist for current user
-            } else if (response.records.length > 1) {
-                for (var r : response.records) {
-                    if (r.FirstName == itbmobile.currentUser.FirstName && r.LastName == itbmobile.currentUser.LastName) {
-                        // Resource record found
-                        itbmobile.currentUserResource = r;
-                        break;
-                    }
-                }
-            } else {
-                // Resource record found
-                itbmobile.currentUserResource = r;
-            }
+        // TODO: this should use backbone model facility
+        client.getCurrentUser(function(user) {
+            itbmobile.currentUser = user;
             
-            alert(r.FirstName);
+            client.query("SELECT Id, First_Name__c, Last_Name__c FROM ITBresource__c where OwnerId = '" + itbmobile.currentUser.id + "' and Active__c = true", function(resources) {
+                itbmobile.currentUserResource = identifyUserResource(itbmobile.currentUser, resources.records);
+                
+                if (itbmobile.currentUserResource != null) {
+                    client.query("SELECT Id, Year__c, Yearly_Days__c, Available_Days__c, Used_Days__c, Requested_Days__c FROM Vacation_Plan__c WHERE Resource__c = '" + itbmobile.currentUserResource.Id + "' and Year__c = '2013'", function(vacationPlans) {
+                        itbmobile.currentUserVacationPlan = getSingleRecord(vacationPlans.records);
+                        $("#myVacations").append(itbmobile.currentUserVacationPlan.Available_Days__c);
+                        $("#myVacations").append(itbmobile.currentUserVacationPlan.Used_Days__c);
+                        $("#myVacations").append(itbmobile.currentUserVacationPlan.Requested_Days__c);
+                        
+                        var pieData = new Array();
+                        //pieData.push({value: itbmobile.currentUserVacationPlan.Available_Days__c, color: "#69D2E7"});
+                        //pieData.push({value: itbmobile.currentUserVacationPlan.Used_Days__c, color: "#E0E4CC"});
+                        //pieData.push({value: itbmobile.currentUserVacationPlan.Requested_Days__c, color: "#F38630"});
+                        pieData.push(["Available", itbmobile.currentUserVacationPlan.Available_Days__c]);
+                        pieData.push(["Used", itbmobile.currentUserVacationPlan.Used_Days__c]);
+                        pieData.push(["Requested", itbmobile.currentUserVacationPlan.Requested_Days__c]);
+                        
+                        var options = {
+                            seriesColors: [ "#69D2E7", "#E0E4CC", "#F38630"],
+                            grid: {
+                                drawBorder: false, 
+                                drawGridlines: false,
+                                background: '#ffffff',
+                                shadow:false
+                            }, 
+                            axesDefaults: {
+                                
+                            },
+                            seriesDefaults: {
+                                renderer: $.jqplot.PieRenderer,
+                                rendererOptions: {
+                                    showDataLabels: true,
+                                    sliceMargin: 4
+                                }
+                            },
+                            legend: {
+                                show: true,
+                                rendererOptions: {
+                                    numberRows: 3
+                                },
+                                location: 'e',
+                            }                     
+                        }
+                        var myVacationPieChart = $.jqplot("myVacationPieChart", [pieData], options);
+                    });
+                }
+            });
+            
+            client.query("SELECT Id, Subject, ActivityDate, Status, Priority, OwnerId, Description FROM Task where OwnerId = '" + itbmobile.currentUser.id + "' and IsClosed = false ORDER BY CreatedDate DESC", function(tasks) {
+                itbmobile.currentUserTasks = tasks.records;
+                for (var i = 0; i < itbmobile.currentUserTasks.length; i++) {
+                    var task = itbmobile.currentUserTasks[i];
+                    $("#myTasks").append("<li>" + task.Subject + "</li>");;
+                }
+            });
         });
-        */
-        
     }
 }
 
+function identifyUserResource(currentUser, currentUserResources) {
+    var resource;
+    if (currentUserResources == null || currentUserResources.length == 0) {
+        // Resource doesn't exist for current user
+    } else if (currentUserResources.length > 1) {
+        for (var i = 0; i < currentUserResources.length; i++) {
+            var r = currentUserResources[i];
+            if (r.First_Name__c == currentUser.firstName && r.Last_Name__c == currentUser.lastName) {
+                // Resource record found
+                resource = r;
+                break;
+            }
+        }
+    } else {
+        // Resource record found
+        resource = currentUserResources[0];
+    }
+    return resource;
+}
+
+function getSingleRecord(arr) {
+    if (arr == null || arr.length == 0) return null;
+    return arr[0];
+}
+
 $(document).on("ready", function () {
-    itbmobile.loadTemplates(["HomeView", "ShellView"], function () {
+    itbmobile.loadTemplates(["ShellView", "HomeView", "ChatterView", "TimerView", "SetupView"], function () {
         itbmobile.router = new itbmobile.Router();
         Backbone.history.start();
 
