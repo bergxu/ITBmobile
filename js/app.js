@@ -114,7 +114,20 @@ function sessionCallback(oauthResponse) {
         client.setSessionToken(oauthResponse.access_token, null,
             oauthResponse.instance_url);
 
+        // Get current user and travel to the home page
+        itbmobile.currentUser = new itbmobile.User();
+        itbmobile.currentUser.fetch({
+            success: function() {
+                if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
+                    window.location.href = "#home";
+                } else {
+                    alert("Can't get current user!");
+                }
+            }
+        });
+        
         // TODO: this should use backbone model facility
+        /*
         client.getCurrentUser(function(user) {
             itbmobile.currentUser = user;
             
@@ -129,9 +142,6 @@ function sessionCallback(oauthResponse) {
                         $("#myVacations").append(itbmobile.currentUserVacationPlan.Requested_Days__c);
                         
                         var pieData = new Array();
-                        //pieData.push({value: itbmobile.currentUserVacationPlan.Available_Days__c, color: "#69D2E7"});
-                        //pieData.push({value: itbmobile.currentUserVacationPlan.Used_Days__c, color: "#E0E4CC"});
-                        //pieData.push({value: itbmobile.currentUserVacationPlan.Requested_Days__c, color: "#F38630"});
                         pieData.push(["Available", itbmobile.currentUserVacationPlan.Available_Days__c]);
                         pieData.push(["Used", itbmobile.currentUserVacationPlan.Used_Days__c]);
                         pieData.push(["Requested", itbmobile.currentUserVacationPlan.Requested_Days__c]);
@@ -175,6 +185,7 @@ function sessionCallback(oauthResponse) {
                 }
             });
         });
+        */
     }
 }
 
