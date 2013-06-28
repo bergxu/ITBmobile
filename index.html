@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html id="mainpage">
+<html>
 <head>
     <meta charset="utf-8">
     <title>ITBmobile</title>
@@ -8,6 +8,7 @@
     <link href="lib/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="lib/bootstrap/css/font-awesome.min.css" rel="stylesheet">
     <link href="lib/jquery.mobile-1.3.1.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -15,156 +16,7 @@
     <![endif]-->
 
     <!-- <script src="http://use.edgefonts.net/source-sans-pro.js"></script> -->
-<style>
-	*
-	{
-		margin:0;
-		padding:0;
-		border:none;
-		
-		
-	}
-		 .ipage{
-	 position:absolute;
-	 top:0px;
-	height:auto!important; /*for ie6 bug and ie7+,moz,webkit 正确*/
-	height:100%; /*修复IE6,all browser*/
-	min-height:100%; /*for ie6 bug and ie7+,moz,webkit 正确*/
-	 width:100%;
 	
-	 z-index:10;
-	 display:block;
-	 
-	 }
-.headercenter
-{
-	-webkit-box-flex:1;
-display: -webkit-box;
-  -webkit-box-orient: horizontal;
-  -webkit-box-pack: center;
-  -webkit-box-align: center;
-  display: -moz-box;
-  -moz-box-orient: horizontal;
-  -moz-box-pack: center;
-  -moz-box-align: center;
-  display: -o-box;
-  -o-box-orient: horizontal;
-  -o-box-pack: center;
-  -o-box-align: center;
-  display: -ms-box;
-  -ms-box-orient: horizontal;
-  -ms-box-pack: center;
-  -ms-box-align: center;
-  display: box;
-  box-orient: horizontal;
-  box-pack: center;
-  box-align: center;
-}
-
-#navmenu
-{
-	-webkit-box-sizing:border-box;
-border-width:1px 1px 1px 0px;border-style:solid;border-color:#000;width:500px; height:100%; background-color:white;position:absolute;top:0;left:0;
-z-index:888;
-	
-}
-.mytest
-{
-	background-color:green;
-	-webkit-transition: left .5s ease-in;
-	position: absolute;	
-	top:0px;
-	z-index:300;
-	display:block;
-}
-
-.leftmenu
-{
-	display:box;
-	 border-width:0 0 1px 0;
-	 border-style:solid;
-	 border-color:#000; 
-	 display:-webkit-box;
-	  -webkit-box-orient:horizontal; 
-	
-}
-
-.leftlog{
-background:red;
-width:53px;
- height:39px; 
- background:url(images/logo.png) no-repeat center; 
- background-size: 52px 38px
-}
-
-.leftcell2
-{
-	display:box;
-	 display:-webkit-box;
-	  -webkit-box-orient:horizontal;
-	   width:auto
-}
-
-
-.leftcell3
-{
-	width:50px; text-align:center; vertical-align:middle
-}
-
-.leftrowcontent
-{ 
-margin:1em; background-color:white 
-}
-.leftrow1cell1
-{
-	display:box;
-	 margin-top:1em;
-	 border-width:1px;
-	 border-style:solid;
-	 border-color:#000;
-	  display:-webkit-box; 
-	  -webkit-box-orient:horizontal; 
-}
-.img1
-{
-	margin-left:1em
-}
-
-.cell1div1
-{
-	display:box; display:-webkit-box; -webkit-box-orient:horizontal; width:auto
-}
-
-.cell2div1content{
-	 width:50px; text-align:center; vertical-align:middle
-}
-.cell3div1content
-{padding-left:0.5em;
-padding-right:0.5em; background:#31485E;display: -webkit-box;
-  -webkit-box-orient: horizontal;
-  -webkit-box-pack: center;
-  -webkit-box-align: center;
-}
-.page_cell1{
-	display:box; display:-webkit-box; -webkit-box-orient:horizontal;
-}
-.page_cell2{background:red;
-width:53px; height:39px; 
-background:url(images/logo.png) no-repeat center; 
-background-size: 52px 38px}
-.page_cell3div1{
-	display:box; display:-webkit-box; -webkit-box-orient:horizontal; width:auto
-}
-.page_cell3div2{
-width:50px; text-align:center; vertical-align:middle
-}
-
-.page_cell4{padding-right:0.5em}
-</style>
-	
-</head>
-
-<body>
 
 
 
@@ -184,6 +36,11 @@ width:50px; text-align:center; vertical-align:middle
     <script src="js/views/chatter.js"></script>
     <script src="js/views/setup.js"></script>
     <script src="js/views/timer.js"></script>
+	
+</head>
+
+<body id="mainpage">
+
 
     <!-- SELECT ONE (AND ONLY ONE) OF THE DATA PERSISTENCE SOLUTIONS BELOW -->
 
@@ -202,12 +59,3 @@ width:50px; text-align:center; vertical-align:middle
 
 </body>
 </html>
-
- <script>
-
-$(document).bind("mobileinit", function(){
-
-
-});
-
-</script>
