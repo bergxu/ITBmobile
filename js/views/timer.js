@@ -15,3 +15,11 @@ itbmobile.TimerView = Backbone.View.extend({
     // }
 
 });
+
+itbmobile.TimerHeaderView = Backbone.View.extend({
+
+    render:function () {
+        this.$el.html('<ul class="nav"><li><a href="#"><i class="icon-time icon-2x"></i></a></li></ul>');
+        return this;
+    }
+});

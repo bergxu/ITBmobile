@@ -129,3 +129,11 @@ itbmobile.HomeTaskListItemView = Backbone.View.extend({
     }
 
 });
+
+itbmobile.HomeHeaderView = Backbone.View.extend({
+
+    render:function () {
+        this.$el.html('<ul class="nav"><li><a href="#"><i class="icon-home icon-2x"></i></a></li></ul>');
+        return this;
+    }
+});

@@ -15,3 +15,12 @@ itbmobile.SetupView = Backbone.View.extend({
     // }
 
 });
+
+
+itbmobile.SetupHeaderView = Backbone.View.extend({
+
+    render:function () {
+        this.$el.html('<ul class="nav"><li><a href="#"><i class="icon-wrench icon-2x"></i></a></li></ul>');
+        return this;
+    }
+});

@@ -37,20 +37,29 @@ itbmobile.Router = Backbone.Router.extend({
         itbmobile.shellView = new itbmobile.ShellView();
         $('body').html(itbmobile.shellView.render().el);
         this.$content = $("#content");
+        this.$pageHeader = $("#pageheader");
     },
 
     home: function () {
         if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
             // user's already logged in
             console.log("user's logged in");
-            if (!itbmobile.homelView) {
-                itbmobile.homelView = new itbmobile.HomeView({model: itbmobile.currentUser});
-                itbmobile.homelView.render();
+            if (!itbmobile.homeView) {
+                itbmobile.homeView = new itbmobile.HomeView();
+                itbmobile.homeView.render();
             } else {
                 console.log('reusing home view');
-                itbmobile.homelView.delegateEvents(); // delegate events when the view is recycled
+                itbmobile.homeView.delegateEvents(); // delegate events when the view is recycled
             }
-            this.$content.html(itbmobile.homelView.el);
+            this.$content.html(itbmobile.homeView.el);
+
+            if (!itbmobile.homeHeaderView) {
+                itbmobile.homeHeaderView = new itbmobile.HomeHeaderView();
+                itbmobile.homeHeaderView.render();
+            } else {
+                itbmobile.homeHeaderView.delegateEvents(); // delegate events when the view is recycled
+            }
+            this.$pageHeader.html(itbmobile.homeHeaderView.el);
             $("#loginPanel").hide();
         } else {
             // user hasn't logged in yet
@@ -69,6 +78,14 @@ itbmobile.Router = Backbone.Router.extend({
             itbmobile.chatterView.delegateEvents(); // delegate events when the view is recycled
         }
         this.$content.html(itbmobile.chatterView.el);
+
+        if (!itbmobile.chatterHeaderView) {
+            itbmobile.chatterHeaderView = new itbmobile.ChatterHeaderView();
+            itbmobile.chatterHeaderView.render();
+        } else {
+            itbmobile.chatterHeaderView.delegateEvents(); // delegate events when the view is recycled
+        }
+        this.$pageHeader.html(itbmobile.chatterHeaderView.el);
     },
     
     timer: function() {
@@ -79,7 +96,15 @@ itbmobile.Router = Backbone.Router.extend({
             console.log('reusing home view');
             itbmobile.timerView.delegateEvents(); // delegate events when the view is recycled
         }
-        this.$content.html(itbmobile.timerView.el);
+    	this.$content.html(itbmobile.timerView.el);
+
+        if (!itbmobile.timerHeaderView) {
+            itbmobile.timerHeaderView = new itbmobile.TimerHeaderView();
+            itbmobile.timerHeaderView.render();
+        } else {
+            itbmobile.timerHeaderView.delegateEvents(); // delegate events when the view is recycled
+        }
+        this.$pageHeader.html(itbmobile.timerHeaderView.el);
     },
     
     setup: function() {
@@ -90,7 +115,15 @@ itbmobile.Router = Backbone.Router.extend({
             console.log('reusing home view');
             itbmobile.setupView.delegateEvents(); // delegate events when the view is recycled
         }
-        this.$content.html(itbmobile.setupView.el);
+		this.$content.html(itbmobile.setupView.el);
+
+        if (!itbmobile.setupHeaderView) {
+            itbmobile.setupHeaderView = new itbmobile.SetupHeaderView();
+            itbmobile.setupHeaderView.render();
+        } else {
+            itbmobile.setupHeaderView.delegateEvents(); // delegate events when the view is recycled
+        }
+        this.$pageHeader.html(itbmobile.setupHeaderView.el);
     }
     
 });
@@ -123,8 +156,7 @@ function sessionCallback(oauthResponse) {
     } else {
         client.setSessionToken(oauthResponse.access_token, null,
             oauthResponse.instance_url);
-
-        // Get current user and travel to the home page
+            
         itbmobile.currentUser = new itbmobile.User();
         itbmobile.currentUser.fetch({
             success: function() {
@@ -135,93 +167,7 @@ function sessionCallback(oauthResponse) {
                 }
             }
         });
-        
-        // TODO: this should use backbone model facility
-        /*
-        client.getCurrentUser(function(user) {
-            itbmobile.currentUser = user;
-            
-            client.query("SELECT Id, First_Name__c, Last_Name__c FROM ITBresource__c where OwnerId = '" + itbmobile.currentUser.id + "' and Active__c = true", function(resources) {
-                itbmobile.currentUserResource = identifyUserResource(itbmobile.currentUser, resources.records);
-                
-                if (itbmobile.currentUserResource != null) {
-                    client.query("SELECT Id, Year__c, Yearly_Days__c, Available_Days__c, Used_Days__c, Requested_Days__c FROM Vacation_Plan__c WHERE Resource__c = '" + itbmobile.currentUserResource.Id + "' and Year__c = '2013'", function(vacationPlans) {
-                        itbmobile.currentUserVacationPlan = getSingleRecord(vacationPlans.records);
-                        $("#myVacations").append(itbmobile.currentUserVacationPlan.Available_Days__c);
-                        $("#myVacations").append(itbmobile.currentUserVacationPlan.Used_Days__c);
-                        $("#myVacations").append(itbmobile.currentUserVacationPlan.Requested_Days__c);
-                        
-                        var pieData = new Array();
-                        pieData.push(["Available", itbmobile.currentUserVacationPlan.Available_Days__c]);
-                        pieData.push(["Used", itbmobile.currentUserVacationPlan.Used_Days__c]);
-                        pieData.push(["Requested", itbmobile.currentUserVacationPlan.Requested_Days__c]);
-                        
-                        var options = {
-                            seriesColors: [ "#69D2E7", "#E0E4CC", "#F38630"],
-                            grid: {
-                                drawBorder: false, 
-                                drawGridlines: false,
-                                background: '#ffffff',
-                                shadow:false
-                            }, 
-                            axesDefaults: {
-                                
-                            },
-                            seriesDefaults: {
-                                renderer: $.jqplot.PieRenderer,
-                                rendererOptions: {
-                                    showDataLabels: true,
-                                    sliceMargin: 4
-                                }
-                            },
-                            legend: {
-                                show: true,
-                                rendererOptions: {
-                                    numberRows: 3
-                                },
-                                location: 'e',
-                            }                     
-                        }
-                        var myVacationPieChart = $.jqplot("myVacationPieChart", [pieData], options);
-                    });
-                }
-            });
-            
-            client.query("SELECT Id, Subject, ActivityDate, Status, Priority, OwnerId, Description FROM Task where OwnerId = '" + itbmobile.currentUser.id + "' and IsClosed = false ORDER BY CreatedDate DESC", function(tasks) {
-                itbmobile.currentUserTasks = tasks.records;
-                for (var i = 0; i < itbmobile.currentUserTasks.length; i++) {
-                    var task = itbmobile.currentUserTasks[i];
-                    $("#myTasks").append("<li>" + task.Subject + "</li>");;
-                }
-            });
-        });
-        */
     }
-}
-
-function identifyUserResource(currentUser, currentUserResources) {
-    var resource;
-    if (currentUserResources == null || currentUserResources.length == 0) {
-        // Resource doesn't exist for current user
-    } else if (currentUserResources.length > 1) {
-        for (var i = 0; i < currentUserResources.length; i++) {
-            var r = currentUserResources[i];
-            if (r.First_Name__c == currentUser.firstName && r.Last_Name__c == currentUser.lastName) {
-                // Resource record found
-                resource = r;
-                break;
-            }
-        }
-    } else {
-        // Resource record found
-        resource = currentUserResources[0];
-    }
-    return resource;
-}
-
-function getSingleRecord(arr) {
-    if (arr == null || arr.length == 0) return null;
-    return arr[0];
 }
 
 $(document).on("ready", function () {

@@ -13,7 +13,9 @@ itbmobile.ShellView = Backbone.View.extend({
     },
 
     events: {
-        "click #navmenu li a": "openPage"
+        "click #navmenu li a": "openPage",
+        "click #logo": "openwinlogo",
+        "click #logomenu": "hidewinlogo"
     },
 
     // search: function (event) {
@@ -34,14 +36,26 @@ itbmobile.ShellView = Backbone.View.extend({
 
     openwin: function (n)
     {
-        n.addClass("mytest");
+        n.addClass("navmenuanimation");
         n.css("left", 0+"px");
+    },
+
+    openwinlogo: function ()
+    {
+        var navmenu =  $('#navmenu', this.el);
+        this.openwin(navmenu);
     },
 
     hidewin: function (n)
     {
-        var sw=parseInt( $(window).width()*2/3);
+        var sw = n.outerWidth(true);
         n.css("left", "-"+sw+"px");
+    },
+
+    hidewinlogo: function ()
+    {
+        var navmenu =  $('#navmenu', this.el);
+        this.hidewin(navmenu);
     },
 
     init: function ()
