@@ -15,3 +15,11 @@ itbmobile.ChatterView = Backbone.View.extend({
     // }
 
 });
+
+itbmobile.ChatterHeaderView = Backbone.View.extend({
+
+    render:function () {
+        this.$el.html('<ul class="nav"><li><a href="#"><i class="icon-comments icon-2x"></i></a></li></ul>');
+        return this;
+    }
+});

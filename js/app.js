@@ -37,17 +37,26 @@ itbmobile.Router = Backbone.Router.extend({
         itbmobile.shellView = new itbmobile.ShellView();
         $('body').html(itbmobile.shellView.render().el);
         this.$content = $("#content");
+        this.$pageHeader = $("#pageheader");
     },
 
     home: function () {
-        if (!itbmobile.homelView) {
-            itbmobile.homelView = new itbmobile.HomeView();
-            itbmobile.homelView.render();
+        if (!itbmobile.homeView) {
+            itbmobile.homeView = new itbmobile.HomeView();
+            itbmobile.homeView.render();
         } else {
             console.log('reusing home view');
-            itbmobile.homelView.delegateEvents(); // delegate events when the view is recycled
+            itbmobile.homeView.delegateEvents(); // delegate events when the view is recycled
         }
-        this.$content.html(itbmobile.homelView.el);
+        this.$content.html(itbmobile.homeView.el);
+
+        if (!itbmobile.homeHeaderView) {
+            itbmobile.homeHeaderView = new itbmobile.HomeHeaderView();
+            itbmobile.homeHeaderView.render();
+        } else {
+            itbmobile.homeHeaderView.delegateEvents(); // delegate events when the view is recycled
+        }
+        this.$pageHeader.html(itbmobile.homeHeaderView.el);
     },
 
     chatter: function()
@@ -60,6 +69,15 @@ itbmobile.Router = Backbone.Router.extend({
             itbmobile.chatterView.delegateEvents(); // delegate events when the view is recycled
         }
         this.$content.html(itbmobile.chatterView.el);
+
+
+        if (!itbmobile.chatterHeaderView) {
+            itbmobile.chatterHeaderView = new itbmobile.ChatterHeaderView();
+            itbmobile.chatterHeaderView.render();
+        } else {
+            itbmobile.chatterHeaderView.delegateEvents(); // delegate events when the view is recycled
+        }
+        this.$pageHeader.html(itbmobile.chatterHeaderView.el);
     },
 
     timer: function()
@@ -71,7 +89,15 @@ itbmobile.Router = Backbone.Router.extend({
             console.log('reusing home view');
             itbmobile.timerView.delegateEvents(); // delegate events when the view is recycled
         }
-    		this.$content.html(itbmobile.timerView.el);
+    	this.$content.html(itbmobile.timerView.el);
+
+        if (!itbmobile.timerHeaderView) {
+            itbmobile.timerHeaderView = new itbmobile.TimerHeaderView();
+            itbmobile.timerHeaderView.render();
+        } else {
+            itbmobile.timerHeaderView.delegateEvents(); // delegate events when the view is recycled
+        }
+        this.$pageHeader.html(itbmobile.timerHeaderView.el);
     }
 
     ,
@@ -85,6 +111,14 @@ itbmobile.Router = Backbone.Router.extend({
             itbmobile.setupView.delegateEvents(); // delegate events when the view is recycled
         }
 		this.$content.html(itbmobile.setupView.el);
+
+        if (!itbmobile.setupHeaderView) {
+            itbmobile.setupHeaderView = new itbmobile.SetupHeaderView();
+            itbmobile.setupHeaderView.render();
+        } else {
+            itbmobile.setupHeaderView.delegateEvents(); // delegate events when the view is recycled
+        }
+        this.$pageHeader.html(itbmobile.setupHeaderView.el);
     }
 
 });
@@ -121,15 +155,15 @@ function sessionCallback(oauthResponse) {
         client.setSessionToken(oauthResponse.access_token, null,
             oauthResponse.instance_url);
 
-        client.query("SELECT id, firstName, lastName FROM User where profileid = '00e20000000ors1' and isactive = true order by lastname limit 12", 
-          function(response){
-            for(var i = 0; i < response.records.length; i++) {
-                itbmobile.store.employees[i].firstName = response.records[i].FirstName;
-                itbmobile.store.employees[i].lastName = response.records[i].LastName;
-            }
-        });
+        // client.query("SELECT id, firstName, lastName FROM User where profileid = '00e20000000ors1' and isactive = true order by lastname limit 12", 
+        //   function(response){
+        //     for(var i = 0; i < response.records.length; i++) {
+        //         itbmobile.store.employees[i].firstName = response.records[i].FirstName;
+        //         itbmobile.store.employees[i].lastName = response.records[i].LastName;
+        //     }
+        // });
 
-        $('#loginli').hide();
+        // $('#loginli').hide();
     }
 }
 
