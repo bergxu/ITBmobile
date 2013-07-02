@@ -40,7 +40,7 @@ itbmobile.ShellView = Backbone.View.extend({
 
     hidewin: function (n)
     {
-        var sw=parseInt( $(window).width()*2/3);
+        var sw = $("#navmenu").outerWidth(true);
         n.css("left", "-"+sw+"px");
     },
 

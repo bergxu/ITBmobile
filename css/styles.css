@@ -47,7 +47,7 @@ box-align: center;
 {
 -webkit-box-sizing:border-box;
 border-width:1px 1px 1px 0px;border-style:solid;border-color:#000;width:500px; height:100%; background-color:white;position:absolute;top:0;left:0;
-z-index:888;
+z-index:9999888;
 
 }
 .mytest
