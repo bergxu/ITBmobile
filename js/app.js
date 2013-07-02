@@ -40,14 +40,24 @@ itbmobile.Router = Backbone.Router.extend({
     },
 
     home: function () {
-        if (!itbmobile.homelView) {
-            itbmobile.homelView = new itbmobile.HomeView();
-            itbmobile.homelView.render();
+        if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
+            // user's already logged in
+            console.log("user's logged in");
+            if (!itbmobile.homelView) {
+                itbmobile.homelView = new itbmobile.HomeView({model: itbmobile.currentUser});
+                itbmobile.homelView.render();
+            } else {
+                console.log('reusing home view');
+                itbmobile.homelView.delegateEvents(); // delegate events when the view is recycled
+            }
+            this.$content.html(itbmobile.homelView.el);
+            $("#loginPanel").hide();
         } else {
-            console.log('reusing home view');
-            itbmobile.homelView.delegateEvents(); // delegate events when the view is recycled
+            // user hasn't logged in yet
+            console.log("user's not logged in");
+            //$("#loginPanel").click();
+            $("#loginPanel").show();
         }
-        this.$content.html(itbmobile.homelView.el);
     },
     
     chatter: function() {      
@@ -215,11 +225,11 @@ function getSingleRecord(arr) {
 }
 
 $(document).on("ready", function () {
-    itbmobile.loadTemplates(["ShellView", "HomeView", "ChatterView", "TimerView", "SetupView"], function () {
+    itbmobile.loadTemplates(["ShellView", "HomeView", "HomeVacationView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView"], function () {
         itbmobile.router = new itbmobile.Router();
         Backbone.history.start();
-
-        $(".icon-home").popupWindow({ 
+        
+        $("#loginPanel").popupWindow({ 
             windowURL: getAuthorizeUrl(loginUrl, clientId, redirectUri),
             windowName: 'Connect',
             centerBrowser: 1,
