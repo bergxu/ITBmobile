@@ -45,28 +45,27 @@ itbmobile.Router = Backbone.Router.extend({
             // user's already logged in
             console.log("user's logged in");
             if (!itbmobile.homeView) {
-                itbmobile.homeView = new itbmobile.HomeView();
+                itbmobile.homeView = new itbmobile.HomeView({model: itbmobile.currentUser});
                 itbmobile.homeView.render();
             } else {
                 console.log('reusing home view');
                 itbmobile.homeView.delegateEvents(); // delegate events when the view is recycled
             }
             this.$content.html(itbmobile.homeView.el);
-
-            if (!itbmobile.homeHeaderView) {
-                itbmobile.homeHeaderView = new itbmobile.HomeHeaderView();
-                itbmobile.homeHeaderView.render();
-            } else {
-                itbmobile.homeHeaderView.delegateEvents(); // delegate events when the view is recycled
-            }
-            this.$pageHeader.html(itbmobile.homeHeaderView.el);
-            $("#loginPanel").hide();
         } else {
             // user hasn't logged in yet
             console.log("user's not logged in");
-            //$("#loginPanel").click();
-            $("#loginPanel").show();
         }
+        
+        if (!itbmobile.homeHeaderView) {
+            
+        } else {
+            console.log('reusing home header view');
+            //itbmobile.homeHeaderView.delegateEvents(); // delegate events when the view is recycled
+        }
+        itbmobile.homeHeaderView = new itbmobile.HomeHeaderView();
+            itbmobile.homeHeaderView.render();
+        this.$pageHeader.html(itbmobile.homeHeaderView.el);
     },
     
     chatter: function() {      
@@ -171,11 +170,11 @@ function sessionCallback(oauthResponse) {
 }
 
 $(document).on("ready", function () {
-    itbmobile.loadTemplates(["ShellView", "HomeView", "HomeVacationView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView"], function () {
+    itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView"], function () {
         itbmobile.router = new itbmobile.Router();
         Backbone.history.start();
         
-        $("#loginPanel").popupWindow({ 
+        $(".icon-home").popupWindow({ 
             windowURL: getAuthorizeUrl(loginUrl, clientId, redirectUri),
             windowName: 'Connect',
             centerBrowser: 1,

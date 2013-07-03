@@ -1,8 +1,22 @@
-itbmobile.HomeView = Backbone.View.extend({
+itbmobile.HomeHeaderView = Backbone.View.extend({
 
     events: {
-        "click .icon-home":"refresh"
+        "click .icon-download": "download"
     },
+
+    render: function () {
+        this.$el.html(this.template());
+        return this;
+    },
+    
+    download: function() {
+        if (itbmobile.homeView != null)
+            itbmobile.homeView.refresh();
+    }
+    
+});
+
+itbmobile.HomeView = Backbone.View.extend({
     
     initialize: function() {
         // on current user change
@@ -24,10 +38,10 @@ itbmobile.HomeView = Backbone.View.extend({
         this.$el.html(this.template(this.model.attributes));
         
         // render vacation plan
-        $('#myVacationSection', this.el).html(this.vacationView.render().el);
+        $('#myVacationSection', this.el).append(this.vacationView.render().el);
         
         // render task list
-        $('#myTaskSection', this.el).html(this.tasksView.render().el);
+        $('#myTaskSection table', this.el).append(this.tasksView.render().el);
         
         return this;
     },
@@ -51,9 +65,9 @@ itbmobile.HomeVacationView = Backbone.View.extend({
     },
 
     render:function () {
-        this.$el.html(this.template(this.model.attributes));
-        
         if (this.model.get("Id") != null) {
+            this.$el.html(this.template(this.model.attributes));
+            
             var pieData = new Array();
             pieData.push(["Available", this.model.get("Available_Days__c")]);
             pieData.push(["Used", this.model.get("Used_Days__c")]);
@@ -93,9 +107,7 @@ itbmobile.HomeVacationView = Backbone.View.extend({
 
 itbmobile.HomeTaskListView = Backbone.View.extend({
 
-    tagName:'ul',
-
-    className:'nav nav-list',
+    tagName: 'tbody',
 
     initialize:function () {
         var self = this;
@@ -116,7 +128,7 @@ itbmobile.HomeTaskListView = Backbone.View.extend({
 
 itbmobile.HomeTaskListItemView = Backbone.View.extend({
 
-    tagName:"li",
+    tagName: "tr",
 
     initialize:function () {
         this.model.on("change", this.render, this);
@@ -128,12 +140,4 @@ itbmobile.HomeTaskListItemView = Backbone.View.extend({
         return this;
     }
 
-});
-
-itbmobile.HomeHeaderView = Backbone.View.extend({
-
-    render:function () {
-        this.$el.html('<ul class="nav"><li><a href="#"><i class="icon-home icon-2x"></i></a></li></ul>');
-        return this;
-    }
 });
