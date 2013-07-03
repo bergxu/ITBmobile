@@ -170,7 +170,7 @@ function sessionCallback(oauthResponse) {
 }
 
 $(document).on("ready", function () {
-    itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView"], function () {
+    itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView"], function () {
         itbmobile.router = new itbmobile.Router();
         Backbone.history.start();
         

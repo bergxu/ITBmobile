@@ -17,12 +17,19 @@ itbmobile.TaskCollection = Backbone.Collection.extend({
         console.log("fetch tasks");
         if (method === "read") {
             var self = this;
-            client.query("SELECT Id, Subject, ActivityDate, Status, Priority, OwnerId, Description FROM Task where OwnerId = '" + options.data.ownerId + "' and IsClosed = false ORDER BY CreatedDate DESC", function(tasks) {
+            client.query("SELECT Id, Subject, ActivityDate, Status, Priority, Description, OwnerId "
+                            + "FROM Task where OwnerId = '" + options.data.ownerId + "' "
+                            + "and Status in ('Not Started', 'In Progress') "
+                            + "ORDER BY ActivityDate ASC NULLS LAST, CreatedDate ASC", function(tasks) {
                 if (options.reset) {
                     self.reset();
                 }
                 for (var i = 0; i < tasks.records.length; i++) {
-                    self.push(new itbmobile.Task(tasks.records[i]));
+                    var task = new itbmobile.Task(tasks.records[i]);
+                    if (task.get("Priority") == "Normal") {
+                        task.set({priorityLabel: "label-info"});
+                    }
+                    self.push(task);
                 }
             });
         }
