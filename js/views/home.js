@@ -41,13 +41,13 @@ itbmobile.HomeView = Backbone.View.extend({
         $('#myVacationSection', this.el).append(this.vacationView.render().el);
         
         // render task list
-        $('#myTaskSection table', this.el).append(this.tasksView.render().el);
+        $('#myTaskSection', this.el).append(this.tasksView.render().el);
         
         return this;
     },
     
     loadData: function() {
-        this.vacationPlan.fetch({data: {ownerId: this.model.get("resourceId"), year: 2013}});
+        this.vacationPlan.fetch({data: {ownerId: this.model.get("resourceId"), year: new Date().getFullYear()}});
         this.tasks.fetch({reset: true, data: {ownerId: this.model.get("id")}});
     },
 
@@ -72,12 +72,19 @@ itbmobile.HomeVacationView = Backbone.View.extend({
             pieData.push(["Available", this.model.get("Available_Days__c")]);
             pieData.push(["Used", this.model.get("Used_Days__c")]);
             pieData.push(["Requested", this.model.get("Requested_Days__c")]);
+            var pieDataLabels = new Array();
+            pieDataLabels.push(this.model.get("Available_Days__c") + " days");
+            pieDataLabels.push(this.model.get("Used_Days__c") + " days");
+            pieDataLabels.push(this.model.get("Requested_Days__c") + " days");
             var options = {
                 seriesColors: [ "#69D2E7", "#E0E4CC", "#F38630"],
                 grid: {
-                    drawBorder: false, 
+                    drawBorder: true, 
+                    borderColor: '#C1C1C1',
+                    borderWidth: 1,
                     drawGridlines: false,
-                    background: '#ffffff',
+                    background: '#F5F5F5',
+
                     shadow:false
                 }, 
                 axesDefaults: {
@@ -86,8 +93,11 @@ itbmobile.HomeVacationView = Backbone.View.extend({
                 seriesDefaults: {
                     renderer: $.jqplot.PieRenderer,
                     rendererOptions: {
+                        //diameter: 200,
+                        padding: 10,
+                        sliceMargin: 4,
                         showDataLabels: true,
-                        sliceMargin: 4
+                        dataLabels: pieDataLabels //percent, label, value
                     }
                 },
                 legend: {
@@ -107,22 +117,37 @@ itbmobile.HomeVacationView = Backbone.View.extend({
 
 itbmobile.HomeTaskListView = Backbone.View.extend({
 
-    tagName: 'tbody',
-
     initialize:function () {
         var self = this;
         this.model.on("reset", this.render, this);
         this.model.on("add", function (task) {
-            self.$el.append(new itbmobile.HomeTaskListItemView({model:task}).render().el);
+            if (self.isOverdue(task)) {
+                $('#overdue', self.el).append(new itbmobile.HomeTaskListItemView({model:task}).render().el);
+            } else {
+                $('#processing', self.el).append(new itbmobile.HomeTaskListItemView({model:task}).render().el);
+            }
         });
     },
 
     render:function () {
-        this.$el.empty();
+        this.$el.html(this.template(this.model.attributes));
         _.each(this.model.models, function (task) {
-            this.$el.append(new itbmobile.HomeTaskListItemView({model:task}).render().el);
+            if (this.isOverdue(task)) {
+                // overdue
+                $('#overdue', this.el).append(new itbmobile.HomeTaskListItemView({model:task}).render().el);
+            } else {
+                $('#processing', this.el).append(new itbmobile.HomeTaskListItemView({model:task}).render().el);
+            }
         }, this);
         return this;
+    },
+    
+    isOverdue: function(task) {
+        if (task.get("ActivityDate") == null || task.get("ActivityDate") == "") {
+            return false;
+        } else {
+            return new Date(task.get("ActivityDate")) < new Date();
+        }
     }
 });
 
