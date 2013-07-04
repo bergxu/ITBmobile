@@ -29,9 +29,6 @@ itbmobile.HomeView = Backbone.View.extend({
         // init sub view for task collection
         this.tasks = new itbmobile.TaskCollection();
         this.tasksView = new itbmobile.HomeTaskListView({model: this.tasks});
-        
-        // load data
-        this.loadData();
     },
 
     render: function() {
@@ -47,15 +44,14 @@ itbmobile.HomeView = Backbone.View.extend({
     },
     
     loadData: function() {
-        //this.vacationPlan.fetch({data: {ownerId: this.model.get("resourceId"), year: new Date().getFullYear()}});
         this.vacationPlan.fetchByOwnerAndYear({data: {ownerId: this.model.get("resourceId"), year: new Date().getFullYear()}});
-        //this.tasks.fetch({reset: true, data: {ownerId: this.model.get("id")}});
         this.tasks.fetchByOwner({reset: true, data: {ownerId: this.model.get("id")}});
     },
 
     refresh:function () {
         console.log("refresh");
-        this.loadData();
+        this.vacationPlan.fetchByOwnerAndYear({data: {ownerId: this.model.get("resourceId"), year: new Date().getFullYear()}, clearCache: true});
+        this.tasks.fetchByOwner({reset: true, data: {ownerId: this.model.get("id")}, clearCache: true});
     }
 
 });
