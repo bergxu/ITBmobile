@@ -41,31 +41,21 @@ itbmobile.Router = Backbone.Router.extend({
     },
 
     home: function () {
+        // render home header
+        itbmobile.homeHeaderView = new itbmobile.HomeHeaderView();
+        this.$pageHeader.html(itbmobile.homeHeaderView.render().el);
+        
+        // render home body
         if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
             // user's already logged in
             console.log("user's logged in");
-            if (!itbmobile.homeView) {
-                itbmobile.homeView = new itbmobile.HomeView({model: itbmobile.currentUser});
-                itbmobile.homeView.render();
-            } else {
-                console.log('reusing home view');
-                itbmobile.homeView.delegateEvents(); // delegate events when the view is recycled
-            }
-            this.$content.html(itbmobile.homeView.el);
+            itbmobile.homeView = new itbmobile.HomeView({model: itbmobile.currentUser});
+            this.$content.html(itbmobile.homeView.render().el);
+            itbmobile.homeView.loadData();
         } else {
             // user hasn't logged in yet
             console.log("user's not logged in");
         }
-        
-        if (!itbmobile.homeHeaderView) {
-            
-        } else {
-            console.log('reusing home header view');
-            //itbmobile.homeHeaderView.delegateEvents(); // delegate events when the view is recycled
-        }
-        itbmobile.homeHeaderView = new itbmobile.HomeHeaderView();
-        itbmobile.homeHeaderView.render();
-        this.$pageHeader.html(itbmobile.homeHeaderView.el);
     },
     
     chatter: function() {      
@@ -161,7 +151,10 @@ function sessionCallback(oauthResponse) {
         itbmobile.currentUser.fetch({
             success: function() {
                 if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
-                    window.location.href = "#home";
+                    itbmobile.currentResource.fetchByOwner({data: {ownerId: itbmobile.currentUser.get("id")}, success: function() {
+                        itbmobile.currentUser.set({resourceId: itbmobile.currentResource.get("Id")});
+                        window.location.href = "#home";
+                    }});
                 } else {
                     alert("Can't get current user!");
                 }
