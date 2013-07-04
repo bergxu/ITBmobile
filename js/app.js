@@ -64,7 +64,7 @@ itbmobile.Router = Backbone.Router.extend({
             //itbmobile.homeHeaderView.delegateEvents(); // delegate events when the view is recycled
         }
         itbmobile.homeHeaderView = new itbmobile.HomeHeaderView();
-            itbmobile.homeHeaderView.render();
+        itbmobile.homeHeaderView.render();
         this.$pageHeader.html(itbmobile.homeHeaderView.el);
     },
     
@@ -157,6 +157,7 @@ function sessionCallback(oauthResponse) {
             oauthResponse.instance_url);
             
         itbmobile.currentUser = new itbmobile.User();
+        itbmobile.currentResource = new itbmobile.Resource();
         itbmobile.currentUser.fetch({
             success: function() {
                 if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
