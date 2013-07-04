@@ -47,8 +47,10 @@ itbmobile.HomeView = Backbone.View.extend({
     },
     
     loadData: function() {
-        this.vacationPlan.fetch({data: {ownerId: this.model.get("resourceId"), year: new Date().getFullYear()}});
-        this.tasks.fetch({reset: true, data: {ownerId: this.model.get("id")}});
+        //this.vacationPlan.fetch({data: {ownerId: this.model.get("resourceId"), year: new Date().getFullYear()}});
+        this.vacationPlan.fetchByOwnerAndYear({data: {ownerId: this.model.get("resourceId"), year: new Date().getFullYear()}});
+        //this.tasks.fetch({reset: true, data: {ownerId: this.model.get("id")}});
+        this.tasks.fetchByOwner({reset: true, data: {ownerId: this.model.get("id")}});
     },
 
     refresh:function () {

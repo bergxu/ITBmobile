@@ -12,13 +12,16 @@ itbmobile.Task = Backbone.Model.extend({
 itbmobile.TaskCollection = Backbone.Collection.extend({
 
     model: itbmobile.Task,
-
-    sync: function(method, collection, options) {
-        console.log("fetch tasks");
-        if (method === "read") {
-            var self = this;
+    
+    fetchByOwner: function(options) {
+        options = options ? _.clone(options) : {};
+        var self = this;
+        var clearCache = options.clearCache ? clearCache : false;
+        var data = options.data ? options.data : {};
+        if (data.ownerId) {
+            console.log("fetch tasks (by fetchByOwner)");
             client.query("SELECT Id, Subject, ActivityDate, Status, Priority, Description, OwnerId "
-                            + "FROM Task where OwnerId = '" + options.data.ownerId + "' "
+                            + "FROM Task where OwnerId = '" + data.ownerId + "' "
                             + "and Status in ('Not Started', 'In Progress') "
                             + "ORDER BY ActivityDate ASC NULLS LAST, CreatedDate ASC", function(tasks) {
                 if (options.reset) {
