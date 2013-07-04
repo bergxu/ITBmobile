@@ -41,6 +41,8 @@ itbmobile.TaskCollection = Backbone.Collection.extend({
             var task = new itbmobile.Task(tasks.records[i]);
             if (task.get("Priority") == "Normal") {
                 task.set({priorityLabel: "label-info"});
+            } else {
+                task.set({priorityLabel: ""});
             }
             model.push(task);
         }
