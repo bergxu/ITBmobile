@@ -1,91 +1,24 @@
- <div id="navmenu">
-<!--头部开始-->
-<div class="leftmenu">
-<div class="leftlog"></div>
+<div id="navmenu">
 
-<div class="headercenter" onclick="hidewin()">
+	<div class="row-fluid">
+		<img id="logomenu" src="img/logo.png" style="height:30px"></img>
+		<i class="icon-reorder icon-2x pull-right"></i>
+	</div>
 
-<div class="leftcell2">
-
-<div  class="leftcell3">Menu
-</div>
-</div>
-</div>
-</div>
-
-<!--详细开始-->
-<div class="leftrowcontent">
-
-
-
-
-
-<div  class="leftrow1cell1"  onClick="showpage('home')">
-<img src="images/home.png" class="img1" />
-<div class="headercenter">
-
-<div class="cell1div1">
-
-<div class="cell2div1content">Home
-</div>
-</div>
-</div>
-<div class="cell3div1content"><i class="icon-circle-arrow-down"></i></div>
+	<ul class="nav nav-pills nav-stacked">
+		<li><a href="#home" id="navHome"><i class="icon-home icon-2x pull-left"></i>Home<i class="icon-arrow-right icon-1x pull-right"></i></a></li>
+		<li><a href="#chatter" id="navChatter"><i class="icon-comments icon-2x pull-left"></i>Chatter<i class="icon-arrow-right icon-1x pull-right"></i></a></li>
+		<li><a href="#timer" id="navTime"><i class="icon-time icon-2x pull-left"></i>Time<i class="icon-arrow-right icon-1x pull-right"></i></a></li>
+		<li><a href="#setup" id="navSetup"><i class="icon-wrench icon-2x pull-left"></i>Setup<i class="icon-arrow-right icon-1x pull-right"></i></a></li>
+	</ul>
 </div>
 
-
-
-
-
-
-<div   class="leftrow1cell1" onClick="showpage('chatter')">
-<img src="images/cc.png" class="img1"/>
-<div class="headercenter">
-
-<div class="cell1div1">
-
-<div  class="cell2div1content">Chatter
-</div>
-</div>
-</div>
-<div class="cell3div1content"><i class="icon-circle-arrow-down"></i></div>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+            <a id="logo" class="brand pull-left" href="javascript:void(0);"><img src="img/logo.png" style="height:30px"></img></a>
+            <div id="pageheader">
+            </div>
+    </div>
 </div>
 
-
-
-
-
-
-<div class="leftrow1cell1" onClick="showpage('timer')" >
-<img src="images/timer.png" class="img1"/>
-<div class="headercenter">
-
-<div class="cell1div1">
-
-<div  class="cell2div1content">Timer
-</div>
-</div>
-</div>
-<div  class="cell3div1content"><i class="icon-circle-arrow-down"></i></div>
-</div>
-
-
-<div   class="leftrow1cell1"  onClick="showpage('setup')">
-<img src="images/setup.png" class="img1"/>
-<div class="headercenter">
-
-<div class="cell1div1">
-
-<div  class="cell2div1content">Setup
-</div>
-</div>
-</div>
-<div  class="cell3div1content"><i class="icon-circle-arrow-down"></i></div>
-</div>
-
-</div>
-<!--详细结束-->
-</div>
-
-
-<div id="content"></div>
+<div id="content" class="container"></div>

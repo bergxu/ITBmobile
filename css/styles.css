@@ -1,21 +1,29 @@
-body {
-    font-family: source-sans-pro, sans-serif;
-    font-size: 15px;
-    /*padding-top: 60px;*/
-    /*padding-bottom: 40px;*/
+#navmenu {
+    -webkit-box-sizing: border-box;
+    border-width: 2px 2px 2px 0px;
+    border-style: solid;
+    border-color: #000;
+    width: 500px;
+    height: 100%;
+    background-color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 999888;
 }
 
-.dropdown-menu {
-    max-height: 400px;
-    overflow: auto;
-    width: 230px;
+.navmenuanimation {
+    -webkit-transition: left .5s ease-in;
+    position: absolute;
+    top: 0px;
+    z-index: 999888;
+    display: block;
 }
 
-.list-item {
-    padding-top: 6px;
-    padding-left: 56px;
+#myTaskSection .table td {
+    vertical-align: inherit;
 }
-
-.no-reports {
-    display: none;
-}
+   .panel
+        {
+             -webkit-box-sizing:border-box;  display: -webkit-box; -webkit-box-orient: horizontal;  width:100%;background-color: #F5F5F5
+        }

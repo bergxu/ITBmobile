@@ -1,38 +1,3 @@
-
-
-
-
-function showpage(sid)
-{
-	hidewin();
-	window.location.href="index.html#"+sid;
-}
-
-function openwin()
- {
- document.getElementById("navmenu").className="mytest";
-document.getElementById("navmenu").style.left=0+"px";
- }
- function hidewin()
- {
-	 	
-
-var sw=parseInt( $(window).width()*2/3);
-document.getElementById("navmenu").style.left="-"+sw+"px";
- }
-
-function init()
-{
-	var sw=parseInt( $(window).width()*2/3);	
-	document.getElementById("navmenu").style.width=sw+"px";
-   document.getElementById("navmenu").style.left="-"+sw+"px";
-   $("#page2").hide();
-   $("#page3").hide();
-   $("#page4").hide();
-	
-}
-
-
 var itbmobile = {
 
     views: {},
@@ -61,108 +26,109 @@ var itbmobile = {
 itbmobile.Router = Backbone.Router.extend({
 
     routes: {
-        "":                 "home",
-		"home":"home",
-		"timer":"timer",
-		"chatter":"chatter",
-		"setup":"setup"
+        "": "home",
+        "home": "home",
+        "chatter": "chatter",
+        "timer": "timer",
+        "setup": "setup"
     },
 
     initialize: function () {
         itbmobile.shellView = new itbmobile.ShellView();
         $('body').html(itbmobile.shellView.render().el);
         this.$content = $("#content");
-		
-		
-				
-$("#mainpage").bind("swiperight",function()
-	{
-		openwin();
-	}
-	);
-	
-	$("#mainpage").bind("swipeleft",function()
-	{
-		hidewin();
-	}
-	);
-	
-init();
-
- 
-
+        this.$pageHeader = $("#pageheader");
     },
 
     home: function () {
-        // Since the home view never changes, we instantiate it and render it only once
-	
-        if (!itbmobile.homelView) {
-            itbmobile.homelView = new itbmobile.HomeView();
-            itbmobile.homelView.render();
+        if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
+            // user's already logged in
+            console.log("user's logged in");
+            if (!itbmobile.homeView) {
+                itbmobile.homeView = new itbmobile.HomeView({ model: itbmobile.currentUser });
+                itbmobile.homeView.render();
+            } else {
+                console.log('reusing home view');
+                itbmobile.homeView.delegateEvents(); // delegate events when the view is recycled
+            }
+            this.$content.html(itbmobile.homeView.el);
+        } else {
+            // user hasn't logged in yet
+            console.log("user's not logged in");
+        }
+
+        if (!itbmobile.homeHeaderView) {
+
+        } else {
+            console.log('reusing home header view');
+            //itbmobile.homeHeaderView.delegateEvents(); // delegate events when the view is recycled
+        }
+        itbmobile.homeHeaderView = new itbmobile.HomeHeaderView();
+        itbmobile.homeHeaderView.render();
+        this.$pageHeader.html(itbmobile.homeHeaderView.el);
+    },
+
+    chatter: function () {
+
+        if (!itbmobile.chatterHeaderView) {
+            itbmobile.chatterHeaderView = new itbmobile.ChatterHeaderView();
+            itbmobile.chatterHeaderView.render();
+        } else {
+            itbmobile.chatterHeaderView.delegateEvents(); // delegate events when the view is recycled
+        }
+        this.$pageHeader.html(itbmobile.chatterHeaderView.el);
+
+        if (!itbmobile.chatterView) {
+
+            chatterOperate.getAll();
         } else {
             console.log('reusing home view');
-            itbmobile.homelView.delegateEvents(); // delegate events when the view is recycled
+            itbmobile.chatterView.delegateEvents(); // delegate events when the view is recycled
+            this.$pageHeader.html(itbmobile.chatterView.el);
         }
-      $("body").append(itbmobile.homelView.el);
-	 $(".ipage").hide();
-		 $("#page1").show();
+      
+    },
+
+    timer: function () {
+        if (!itbmobile.timerView) {
+            itbmobile.timerView = new itbmobile.TimerView();
+            itbmobile.timerView.render();
+        } else {
+            console.log('reusing home view');
+            itbmobile.timerView.delegateEvents(); // delegate events when the view is recycled
+        }
+        this.$content.html(itbmobile.timerView.el);
+
+        if (!itbmobile.timerHeaderView) {
+            itbmobile.timerHeaderView = new itbmobile.TimerHeaderView();
+            itbmobile.timerHeaderView.render();
+        } else {
+            itbmobile.timerHeaderView.delegateEvents(); // delegate events when the view is recycled
+        }
+        this.$pageHeader.html(itbmobile.timerHeaderView.el);
+    },
+
+    setup: function () {
+        if (!itbmobile.setupView) {
+            itbmobile.setupView = new itbmobile.SetupView();
+            itbmobile.setupView.render();
+        } else {
+            console.log('reusing home view');
+            itbmobile.setupView.delegateEvents(); // delegate events when the view is recycled
+        }
+        this.$content.html(itbmobile.setupView.el);
+
+        if (!itbmobile.setupHeaderView) {
+            itbmobile.setupHeaderView = new itbmobile.SetupHeaderView();
+            itbmobile.setupHeaderView.render();
+        } else {
+            itbmobile.setupHeaderView.delegateEvents(); // delegate events when the view is recycled
+        }
+        this.$pageHeader.html(itbmobile.setupHeaderView.el);
     }
-,
-chatter:function()
-{      
-	    if (!itbmobile.Chatter1View) {
-            itbmobile.Chatter1View = new itbmobile.ChatterView();
-            itbmobile.Chatter1View.render();
-        } else {
-            console.log('reusing home view');
-            itbmobile.Chatter1View.delegateEvents(); // delegate events when the view is recycled
-        }
-		 $("body").append(itbmobile.Chatter1View.el);
-		 $(".ipage").hide();
-		 $("#page2").show();
-},
-timer:function()
-{
-	
-		if (!itbmobile.Timer1View) {
-            itbmobile.Timer1View = new itbmobile.TimerView();
-            itbmobile.Timer1View.render();
-        } else {
-            console.log('reusing home view');
-            itbmobile.Timer1View.delegateEvents(); // delegate events when the view is recycled
-        }
 
-		   $("body").append(itbmobile.Timer1View.el);
-	 $(".ipage").hide();
-		 $("#page3").show();
-}
+});
 
-,
-setup:function(){
-	
-		    if (!itbmobile.Setup1View) {
-            itbmobile.Setup1View = new itbmobile.SetupView();
-            itbmobile.Setup1View.render();
-        } else {
-            console.log('reusing home view');
-            itbmobile.Setup1View.delegateEvents(); // delegate events when the view is recycled
-        }
-		
-		   $("body").append(itbmobile.Setup1View.el);
-	 $(".ipage").hide();
-	 
-		 $("#page4").show();
-}
-
-}
-
-
-
-);
-
-
-
-    
 /*
  * This code allows you to use the Force.com REST API sample from your own
  * server, using OAuth to obtain a session id.
@@ -191,33 +157,33 @@ function sessionCallback(oauthResponse) {
     } else {
         client.setSessionToken(oauthResponse.access_token, null,
             oauthResponse.instance_url);
-
-        client.query("SELECT id, firstName, lastName FROM User where profileid = '00e20000000ors1' and isactive = true order by lastname limit 12", 
-          function(response){
-            for(var i = 0; i < response.records.length; i++) {
-                itbmobile.store.employees[i].firstName = response.records[i].FirstName;
-                itbmobile.store.employees[i].lastName = response.records[i].LastName;
+            
+        itbmobile.currentUser = new itbmobile.User();
+        itbmobile.currentUser.fetch({
+            success: function() {
+                if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
+                    window.location.href = "#home";
+                } else {
+                    alert("Can't get current user!");
+                }
             }
         });
-
-        $('#loginli').hide();
     }
 }
 
 $(document).on("ready", function () {
-    itbmobile.loadTemplates(["HomeView", "ShellView","ChatterView","TimerView","SetupView"],
-        function () {
-            itbmobile.router = new itbmobile.Router();
-            Backbone.history.start();
 
-            // $('#login').popupWindow({ 
-            //     windowURL: getAuthorizeUrl(loginUrl, clientId, redirectUri),
-            //     windowName: 'Connect',
-            //     centerBrowser: 1,
-            //     height:524, 
-            //     width:675
-            // });
+    itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView"], function () {
+    
+        itbmobile.router = new itbmobile.Router();
+        Backbone.history.start();
+
+        $(".icon-home").popupWindow({
+            windowURL: getAuthorizeUrl(loginUrl, clientId, redirectUri),
+            windowName: 'Connect',
+            centerBrowser: 1,
+            height: 524,
+            width: 675
         });
-
-
+    });
 });
