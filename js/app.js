@@ -70,23 +70,31 @@ itbmobile.Router = Backbone.Router.extend({
 
     chatter: function () {
 
+
+
+
         if (!itbmobile.chatterHeaderView) {
             itbmobile.chatterHeaderView = new itbmobile.ChatterHeaderView();
             itbmobile.chatterHeaderView.render();
+
         } else {
             itbmobile.chatterHeaderView.delegateEvents(); // delegate events when the view is recycled
         }
         this.$pageHeader.html(itbmobile.chatterHeaderView.el);
 
         if (!itbmobile.chatterView) {
-
-            chatterOperate.getAll();
+            var chatter = new itbmobile.chatterData();
+          //  chatter.set({ first: 1, user: itbmobile.currentUser, newgroup: false, data: response });
+           // itbmobile.chatterView = new itbmobile.ChatterView({ model: chatter });
+         //   itbmobile.chatterView.render();
+          //  $("#content").html(itbmobile.chatterView.el);
+          chatterOperate.getAllGroups();
         } else {
             console.log('reusing home view');
             itbmobile.chatterView.delegateEvents(); // delegate events when the view is recycled
             this.$pageHeader.html(itbmobile.chatterView.el);
         }
-      
+
     },
 
     timer: function () {
@@ -173,8 +181,8 @@ function sessionCallback(oauthResponse) {
 
 $(document).on("ready", function () {
 
-    itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView"], function () {
-    
+    itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView","ChatterHeaderView"], function () {
+     
         itbmobile.router = new itbmobile.Router();
         Backbone.history.start();
 

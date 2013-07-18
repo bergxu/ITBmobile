@@ -1,8 +1,7 @@
 <% if(first==1){ 
 %>
 
-
-<!--<div class="horizontalpanel">
+<div class="horizontalpanel">
 <div style="width:42"><img src="images/write.png" width="20" height="20" alt=""   style="padding: 10px"></div>
 <div style="display: -webkit-box;-webkit-box-flex:1; font-weight: bold; color: #31373B; font-size: 6px; text-align: center; vertical-align: bottom;  -webkit-box-orient: horizontal;
   -webkit-box-pack: center;
@@ -10,10 +9,10 @@
         class="WB_name">超级大坏人海绵宝宝<img src="images/downarrow.png" /></div>
 <div style="width:42"><img src="images/refresh.png" width="20" height="20" alt=""   style="padding: 10px"></div>
 </div>
--->
+
 
 <!--评论输入-->
-<div id="commentinputDialog"  style="height:100%; width:100%; position:fixed; top:0;left:0; z-index:8888; display:none">
+<div id="commentinputDialog"  style="height:100%; width:100%; position:fixed; top:0;left:0; z-index:5; display:none">
 <table style="height:100%; width:100%;"><tr><td>
 <div class="wchorizontalpanel"  >
 <div style="width:31px;height:39px"><img src="images/leftarrow.png" width="20" height="20" alt="" style="padding: 10px"></div>
@@ -26,8 +25,8 @@
 </table>
 </div>
 <!--评论输入-->
-<%} 
 
+<%} 
 for (var i=0;i<=data.items.length-1;i++){ 
 
     var actor = data.items[i].actor;
@@ -66,27 +65,29 @@ for (var i=0;i<=data.items.length-1;i++){
    }
 
    }
-%>
 
+%>
 <!-- Save for Web Slices (未标题-2) -->
 
 
 <!--消息开始-->
-<div style="-webkit-box-sizing: border-box; display: -webkit-box; -webkit-box-orient: horizontal; background-color: #F4F4F4; background-image: url(images/ccbg.png); background-position: bottom left; background-repeat: repeat-x; padding:10px">
-<div style="width:46;"><img src="<%=imgurl%>" alt="" width="40" height="40" style="padding:2px"/></div>
+<div style="-webkit-box-sizing: border-box; display: -webkit-box; -webkit-box-orient: horizontal; background-color: #F4F4F4; background-image: url(images/ccbg.png); background-position: bottom left; background-repeat: repeat-x; padding:10px"  cid="<%=id%>">
+<div style="width:46;"> <img id="myimg" src="<%=imgurl%>"   class="img-rounded" style="padding: 2px; height:30px; width:30px" /></div>
 <div style="display: -webkit-box;-webkit-box-flex:1;  -webkit-box-orient: vertical;width:100%">
 <!--content-->
 <div style="-webkit-box-sizing: border-box; display: -webkit-box; -webkit-box-orient:horizontal ; width:100% ">
-<div style="display: -webkit-box; -webkit-box-flex: 1; font-weight: bold; font-size: 14px; padding-left:10px">
+<div style="display: -webkit-box; -webkit-box-flex: 1; font-weight: bold; font-size: 14px;">
+
    <% if(newgroup){ %>
-          <img myid="groupimg" src="<%=newgroup.img%>"    groupid="<%=newgroup.id%>" width="30" height="30" />
+          <img myid="groupimg" src="<%=newgroup.img%>"    groupid="<%=newgroup.id%>" />
           <%}%>
 
   <% if( groupimg!=null){ %>
-          <img myid="groupimg" src="<%=groupimg%>"    groupid="<%=preamble.messageSegments[0].reference.id%>"  width="30" height="30"/>
+          <img myid="groupimg" src="<%=groupimg%>"    groupid="<%=preamble.messageSegments[0].reference.id%>"/>
           <%}%>
-<span style="font-size:1em; font-weight: bold; color: #1574B9;" id="myname"> <% if(newgroup){%><%=newgroup.name%> - <%}%><%=data.items[i].preamble.text%></span>
-</div><div style="width:130px; font-size: 6px;"> <%=fcdt%></div>
+
+
+ <% if(newgroup){%><%=newgroup.name%> - <%}%><%=data.items[i].preamble.text%></div><div style="width: 60px; font-size: 8px;"> <%=fcdt%></div>
 </div>
 <div style="display:block;font-size:10px"><%=bodytext%></div>
  
@@ -98,7 +99,7 @@ for (var i=0;i<=data.items.length-1;i++){
 <div style="display: -webkit-box;-webkit-box-flex:1; background-image:url(images/selectcommentbg.png); background-repeat:repeat-x; ">
 
 <div style="height:41;-webkit-box-flex:1;text-align:center; vertical-align:middle;-webkit-box-pack: center; font-size: 6px;"></div><img src="images/selectcomment_04.png" width="8" height="41" alt="">
-<div  style="height: 41; -webkit-box-flex: 1; margin-left: 20px;width:22px;"><img src="images/<%=likeimg%>" style="margin-top:10px; width:20px; height:20px"/></div>
+<div  style="height: 41; -webkit-box-flex: 1; margin-left: 20px;width:22px;"><img src="images/<%=likeimg%>"  style="margin-top:10px; width:20px; height:20px"/></div>
 </div>
 <div>
 	<img src="images/selectcomment_08.png" width="17" height="41" alt="">
@@ -106,22 +107,28 @@ for (var i=0;i<=data.items.length-1;i++){
 </div>
 <!--评论按钮-->
 <!--赞成列表-->
-   <!-- like-->
-   <% if(likes.total>0){ %>
-    <ul myid="commentlike" class="nav nav-list">
-    <%for (var k=0;k<=likes.likes.length-1;k++){ 
+
+  <% if(likes.total>0){ %>
+
+<div  myid="commentlike">
+
+
+  <%for (var k=0;k<=likes.likes.length-1;k++){ 
    var  cname=likes.likes[k].user.name;
    if (user.attributes.id==likes.likes[k].user.id)
    {
    cname="you";
    }
     %>
-    <li lcid="<%=likes.likes[k].user.id%>" likeid="<%=likes.likes[k].id%>"><a href="javascript:void(0)"><em class="W_ico20 icon_praised_b"></em> <%=cname%></a></li>
-    <%} %>
-    </ul>
-    <%} %>
-<!--            endlike-->
 
+<div>
+<a href="javascript:void(0);"  title="like"><em class="W_ico20 icon_praised_b"></em>(8)</a>
+</div>
+  <%} %>
+
+
+</div>
+  <%} %>
 
 
    <%
@@ -156,6 +163,7 @@ for (var i=0;i<=data.items.length-1;i++){
     %>
 
 
+
 <!--用户评论信息-->
 <div style=" width:100%; margin-bottom:10px; padding-top:10px; padding-bottom:10px">
 <!--head-->
@@ -176,19 +184,67 @@ for (var i=0;i<=data.items.length-1;i++){
 <!---用户评论内容-->
 
 <div style="-webkit-box-sizing: border-box; display: -webkit-box; -webkit-box-orient:horizontal ; width:100% ; ">
-<div style="display: -webkit-box; -webkit-box-flex: 1; color:blue; font-weight: bold; font-size: 14px;"><%=comments.comments[j].user.name%></div><div style="width: 120px; font-size: 6px;"><%=scdt%></div>
+<div style="display: -webkit-box; -webkit-box-flex: 1; color:blue; font-weight: bold; font-size: 14px;">东方早报</div><div style="width: 60px; font-size: 9px;">2012-12-12 10:10:10</div>
+</div>
+<div style="display:block;font-size:10px">弹性盒子模型下的爸爸（父标签）其实是很有货的，男人嘛，就应该这样，够沉稳够内涵。
+ 爸爸肚子中的货有：box-orient, box-direction, box-align, box-pack, box-lines. 现在依次讲讲这里box打头的属性都是干嘛用的。</div>
+<!---用户评论内容-->
+<!--赞同评论的按钮-->
+<div  style="text-align:right">
+<img src="images/like.png" style="width:20px; height:20px" style="margin-right:0"/>
+</div>
+<!--赞同评论的按钮-->
+<div>
+<div>
+<a href="javascript:void(0);" action-type="feed_list_like" action-data="version=mini&amp;qid=heart&amp;mid=3601377806475262&amp;like_src=1" title="赞"><em class="W_ico20 icon_praised_b"></em>(8)</a>
+</div>
+<div>
+<a href="javascript:void(0);" action-type="feed_list_like" action-data="version=mini&amp;qid=heart&amp;mid=3601377806475262&amp;like_src=1" title="赞"><em class="W_ico20 icon_praised_b"></em>(8)</a>
+</div>
+<div>
+<a href="javascript:void(0);" action-type="feed_list_like" action-data="version=mini&amp;qid=heart&amp;mid=3601377806475262&amp;like_src=1" title="赞"><em class="W_ico20 icon_praised_b"></em>(8)</a>
+</div>
+</div>
+</div>
+<div  style= " background-image:url(images/dialog_05.png); background-repeat:repeat-y; width:6px;">
+</div>
+
+</div>
+
+<!--用户评论信息-->
+
+<%} %>
+
+<div style=" width:100%; margin-bottom:10px; padding-top:10px; padding-bottom:10px">
+<!--head-->
+<div style="-webkit-box-sizing:border-box;  display: -webkit-box; -webkit-box-orient: horizontal; ">
+<div  width="43"><img src="images/&#x672a;&#x6807;&#x9898;-3_01.png" width="43" height="15" alt=""></div>
+<div style="display: -webkit-box;-webkit-box-flex:1; background-image:url(images/dialogbg.png); background-repeat:repeat-x">
+</div>
+<div  width="8">
+<img src="images/&#x672a;&#x6807;&#x9898;-3_03.png" width="8" height="15" alt="">
+</div>
+</div>
+<!--head end-->
+<!--content-->
+
+<div style="-webkit-box-sizing:border-box;  display: -webkit-box; -webkit-box-orient: horizontal;">
+<div style= " background-image:url(images/dialog_03.png); background-repeat:repeat-y; width:6px;"></div>
+<div style="display: -webkit-box;-webkit-box-flex:1; -webkit-box-orient: vertical; background-color: #EEEFEF;padding:10px;">
+<!---用户评论内容-->
+
+<div style="-webkit-box-sizing: border-box; display: -webkit-box; -webkit-box-orient:horizontal ; width:100% ; ">
+<div style="display: -webkit-box; -webkit-box-flex: 1; color:blue; font-weight: bold; font-size: 14px;" ccid="<%=comments.comments[j].id%>"><%=comments.comments[j].user.name%></div><div style="width: 60px; font-size: 9px;"><%=scdt%></div>
 </div>
 <div style="display:block;font-size:10px"><%=text%></div>
 <!---用户评论内容-->
 <!--赞同评论的按钮-->
 <div  style="text-align:right">
-<img src="images/<%=likeimg%>" style="width:20px; height:20px" style="margin-right:0"/>
+<img src="images/like.png" style="width:20px; height:20px" style="margin-right:0"/>
 </div>
 <!--赞同评论的按钮-->
   <% if ((clike!=null)&&(clike.likes.length>0)){ 
   %>
- 
-
   <ul myid="clikes" class="nav nav-list">
   <% 
   _.each( clike.likes, function(n){
@@ -212,8 +268,8 @@ for (var i=0;i<=data.items.length-1;i++){
 </div>
 
 </div>
-
-
+  <%} %>
+<!--用户评论信息-->
 
 
 <!--content end-->
@@ -230,14 +286,12 @@ for (var i=0;i<=data.items.length-1;i++){
 </div>
 
 
-<%} %>
 
-<!--用户评论信息-->
 <!--endcontent-->
 </div>
 
-
+</div>
 
 </div>
+  <%} %>
 <!--消息结束-->
-<%} %>
