@@ -11,11 +11,22 @@ itbmobile.ChatterView = Backbone.View.extend({
 
 });
 
+
+itbmobile.ChatterCommentView = Backbone.View.extend({
+  render: function () {
+        this.el = this.template(this.model.attributes);
+
+        return this;
+    }
+
+});
+
+
+
 itbmobile.ChatterHeaderView = Backbone.View.extend({
 
     render: function () {
-        this.$el.html('<ul class="nav"><li><a href="#"><i class="icon-home icon-2x"></i></a></li></ul><div class="navbar-inner"><a href="javascript:void(1);" onclick="chatterOperate.showNewFeedPanel(this)"><i class="icon-comments icon-2x"></i></a></div>'+
-        '<div id="bottompanel" class="well" style="position:fixed; bottom:0px; height:35px; width:100%; text-align:center; vertical-align:middle;display:none;color:blue">loading.....</div>');
+        this.$el.html('<ul class="nav"><li><a href="#"><i class="icon-home icon-2x"></i></a></li></ul><div class="navbar-inner"><a href="javascript:void(1);" onclick="chatterOperate.showNewFeedPanel(this)"><i class="icon-comments icon-2x"></i></a></div>');
         return this;
     }
 });
@@ -40,6 +51,7 @@ Date.prototype.format = function (format) {
 };
 
 var chatterOperate = {
+    fobj: null,
     Feeds: [],
     result: null,
     resultArr: [],
@@ -59,11 +71,13 @@ var chatterOperate = {
         return { top: t, left: l, height: h, width: w };
 
     },
-
-    shownewFeedWin: function () {
+    wait: function () {
+        $("#waitflag").show();
         $("#fullbg").show();
-        $("#commentinputDialog").show();
-
+    },
+    hideWait: function () {
+        $("#waitflag").hide();
+        $("#fullbg").hide();
     },
     showGroupChoicePanel: function () {
         var ad = chatterOperate.getPostion($("#btnselectChoice").get(0));
@@ -72,8 +86,8 @@ var chatterOperate = {
         document.getElementById("selectChoice").style.display = "block";
     },
     newFeed: function () {
-
-        var text = $("#feedtext").val();
+        chatterOperate.wait();
+        var text = $("#feedtxt").val();
         var info = { "body":
 		{
 		    "messageSegments": [
@@ -103,9 +117,6 @@ var chatterOperate = {
 
             path = '/' + client.apiVersion + "/chatter/feeds/record/" + id + "/feed-items";
             client.ajax(path, function (response) {
-                //callback
-                alert("send group");
-
                 var chatter = new itbmobile.chatterData();
                 var feeds = [];
                 feeds.push(response);
@@ -114,7 +125,8 @@ var chatterOperate = {
                 mychatterView.render();
                 var content = mychatterView.el;
                 $("#content").prepend(content);
-                $("#newFeedDialog").hide();
+                $("#commentinputDialog").hide();
+                chatterOperate.hideWait();
 
                 return;
             }, function (response) {
@@ -129,8 +141,6 @@ var chatterOperate = {
 
 
         client.ajax(path, function (response) {
-            //callback
-
             var chatter = new itbmobile.chatterData();
             var feeds = [];
             feeds.push(response);
@@ -139,7 +149,8 @@ var chatterOperate = {
             mychatterView.render();
             var content = mychatterView.el;
             $("#content").prepend(content);
-            $("#newFeedDialog").hide();
+            $("#commentinputDialog").hide();
+            chatterOperate.hideWait();
         }, function (response) {
             //error
             alert("error");
@@ -149,7 +160,7 @@ var chatterOperate = {
     },
 
     commentlike: function (obj, cid) {
-
+        chatterOperate.wait();
         var fobj = $(obj).parents("[myid='commentpanel']");
         var commentlikes = fobj.find("[myid='clikes']").eq(0);
 
@@ -158,9 +169,10 @@ var chatterOperate = {
             var likeli = fobj.find('[clcid="' + itbmobile.currentUser.id + '"]');
             var likeid = likeli.attr("clikeid");
             chatterOperate.unlike(likeid, function (response) {
-                alert("delete");
-                obj.src = "img/like.png";
+
+                obj.src = "images/like.png";
                 likeli.remove();
+                chatterOperate.hideWait();
             });
 
             return;
@@ -172,7 +184,7 @@ var chatterOperate = {
 
             var path = '/' + client.apiVersion + "/chatter/comments/" + cid + "/likes";
             client.ajax(path, function (response) {
-                var li = '<li clcid="' + itbmobile.currentUser.id + '" clikeid="' + response.id + '"><a href="javascript:void(0)"><img src="img/like.png"/> you</a></li>';
+                var li = '<li clcid="' + itbmobile.currentUser.id + '" clikeid="' + response.id + '"><a href="javascript:void(0)"><img src="images/like.png"/> you</a></li>';
                 if (commentlikes.length == 0) {
 
                     fobj.append('<ul myid="clikes" class="nav nav-list">' + li + "</ul>");
@@ -180,7 +192,8 @@ var chatterOperate = {
                 else {
                     commentlikes.append(li);
                 }
-                obj.src = "img/unlike.png";
+                obj.src = "images/unlike.png";
+                chatterOperate.hideWait();
 
             }, function (response) {
 
@@ -197,15 +210,15 @@ var chatterOperate = {
     },
 
     dolike: function (obj, cid) {
-
+        chatterOperate.wait();
         var fobj = $(obj).parents('[cid]');
         var commlike = fobj.find("[myid='commentlike']").eq(0);
         if (obj.src.indexOf("unlike.png") != -1) {
             var likeli = commlike.find('[lcid="' + itbmobile.currentUser.id + '"]');
             var likeid = likeli.attr("likeid");
             chatterOperate.unlike(likeid, function (response) {
-                alert("delete");
-                obj.src = "img/like.png";
+                chatterOperate.hideWait();
+                obj.src = "images/like.png";
                 likeli.remove();
             });
             return;
@@ -214,10 +227,10 @@ var chatterOperate = {
 
         var path = '/' + client.apiVersion + "/chatter/feed-items/" + cid + "/likes";
         client.ajax(path, function (response) {
-            //callback
-            alert("add a like");
-            obj.src = "img/unlike.png";
-            var li = '<ul myid="commentlike" class="nav nav-list"><li lcid="' + itbmobile.currentUser.id + '" likeid="' + response.id + '"><a href="javascript:void(0)"><img src="img/like.png" />you</a></li>';
+
+            chatterOperate.hideWait();
+            obj.src = "images/unlike.png";
+            var li = '<ul myid="commentlike" class="nav nav-list"><li lcid="' + itbmobile.currentUser.id + '" likeid="' + response.id + '"><a href="javascript:void(0)"><img src="images/like.png" /> you</a></li>';
             if (commlike.length == 0) {
                 fobj.find("[myid='addcommentDIV']").eq(0).after('<ul myid="commentlike" class="nav nav-list">' + li + "</ul>");
             }
@@ -240,7 +253,6 @@ var chatterOperate = {
         }, "DELETE");
     },
     showNewFeedPanel: function () {
-        $("#fullbg").show();
         $("#commentinputDialog").show();
 
     },
@@ -248,11 +260,8 @@ var chatterOperate = {
         $("#newFeedDialog").show();
     },
     addonecomment: function (obj) {
-        var fobj = $(obj).parents('[cid]');
-
-        fobj.find("[myid='addcommentDIV']").eq(0).show();
-        fobj.find("[myid='commentinput']").eq(0).val("");
-
+        chatterOperate.fobj = $(obj).parents('[cid]');
+        $("#commentDialog").show();
     }
     ,
     hideAddonecomment: function (obj) {
@@ -261,12 +270,15 @@ var chatterOperate = {
     ,
 
 
-    newAcomment: function (obj, feedID) {
+    newAcomment: function () {
 
-        var fobj = $(obj).parents('[cid]');
-        var text = fobj.find("[myid='commentinput']").eq(0).val();
+        chatterOperate.wait();
+
+        var fobj = chatterOperate.fobj;
+        var feedID = fobj.attr("cid");
+        var text = $('#commenttxt').val();
+        var text1 = text.replace(/\n/g, '<br />');
         var panel = fobj.find("[myid='addcommentDIV']").eq(0);
-        alert("start");
         var path = '/' + client.apiVersion + "/chatter/feed-items/" + feedID + "/comments?text=New+comment";
         //  /services/data/v28.0/chatter/feed-items/0D5D0000000DaSbKAK/comments?text=New+comment
 
@@ -283,23 +295,22 @@ var chatterOperate = {
 
 
         client.ajax(path, function (response) {
+            chatterOperate.hideWait();
             var ccid = response.id;
             var scdt = new Date(response.createdDate).format("yyyy-MM-dd hh:mm:ss");
-            var content = '<div class="well" myid="commentpanel"><div>' + text + '</div><span ccid="' + response.id + '" style="color: #1574B9;">' + response.user.name + " " + scdt + '</span><div><a href="javascript:void(0)"><img src="img/like.png"  onclick="chatterOperate.commentlike(this,\'' + response.id + '\')"/></a></div></div>';
-            var clist = fobj.find("[myid='commentpanel']");
-            if (clist.length == 0) {
-                if (panel.next().attr("myid") == "commentlike") {
-                    panel.next().aftert(content);
-                }
-                else {
-                    panel.after(content);
-                }
-            } else {
-                clist.eq(clist.length - 1).after(content);
+            var chatter = new itbmobile.chatterData();
+            chatter.set({ name: response.user.name, dt: scdt, text: text1, id: response.id });
+            var myView = new itbmobile.ChatterCommentView({ model: chatter });
+            myView.render();
+            var content = myView.el;
+            if (panel.next().attr("myid") == "commentlike") {
+                panel.next().after(content);
             }
-            fobj.find("[myid='commentinput']").eq(0).val("");
-            panel.hide();
-            $("#newFeedDialog").hide();
+            else {
+                panel.after(content);
+            }
+            $('#commenttxt').val("");
+            $("#commentDialog").hide();
         }, function (response) {
             //error
             alert("add error");
@@ -310,8 +321,6 @@ var chatterOperate = {
     getAllGroups: function () {
         var path = '/' + client.apiVersion + '/chatter/groups';
         client.ajax(path, function (response) {
-            alert("group success");
-
             chatterOperate.groups = response;
             chatterOperate.getAll();
         },
@@ -323,10 +332,10 @@ var chatterOperate = {
     }
     ,
     getAll: function () {
+        chatterOperate.wait();
         var path = '/' + client.apiVersion + "/chatter/feeds/news/me/feed-items";
-        $("#content").html("<div class='well'>loading...</div>");
         client.ajax(path, function (response) {
-
+            chatterOperate.hideWait();
             chatterOperate.result = response;
             chatterOperate.resultArr.push(response);
             var chatter = new itbmobile.chatterData();
@@ -334,8 +343,6 @@ var chatterOperate = {
             itbmobile.chatterView = new itbmobile.ChatterView({ model: chatter });
             itbmobile.chatterView.render();
             $("#content").html(itbmobile.chatterView.el);
-            alert("receive");
-            return;
             $(window).bind("scroll", function () {
 
                 if (window.location.href.indexOf("#chatter") == -1) {
@@ -348,6 +355,7 @@ var chatterOperate = {
                 }
 
                 if ((document.body.scrollHeight - wh - document.body.scrollTop) <= 10) {
+
                     $("#bottompanel").show();
                     chatterOperate.nextpage();
                 }
@@ -375,7 +383,7 @@ var chatterOperate = {
                 li = li + '<option groupid="' + n.id + '"><a href="javascript:void(0)">' + n.name + '</a></option>';
             });
             $('#selectGroup').html(li);
-
+            chatterOperate.hideWait();
 
         }, function () {
             //error
@@ -392,8 +400,7 @@ var chatterOperate = {
         var path = '/' + client.apiVersion + "/chatter/feeds/news/" + st;
         // chatterOperate.result.nextPageUrl;
         client.ajax(path, function (response) {
-
-            alert("nextpage");
+            $("#bottompanel").hide();
             chatterOperate.resultArr.push(response);
             chatterOperate.result = response;
             var chatter = new itbmobile.chatterData();
@@ -401,8 +408,10 @@ var chatterOperate = {
             mychatterView = new itbmobile.ChatterView({ model: chatter });
             mychatterView.render();
             var child = $("#content").append(mychatterView.el);
-            $("#bottompanel").hide();
-            alert("finished");
+
+            // $("#content").find("[id='bottompanel']").remove();
+
+
 
         }, function (response) {
             //error
