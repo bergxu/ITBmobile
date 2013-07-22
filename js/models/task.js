@@ -56,7 +56,7 @@ itbmobile.TaskCollection = Backbone.Collection.extend({
             options.success(tasks);
 
         }
-    }
+    },
 
     sync: function(method, collection, options) {
         console.log("fetch tasks");

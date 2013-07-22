@@ -38,10 +38,5 @@ itbmobile.Resource = Backbone.Model.extend({
         }
         return resource;
     }
-    sync: function(method, model, options) {
-        if (method === "read") {
-            
-        }
-    }
 
 });
