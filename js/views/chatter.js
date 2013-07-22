@@ -1,8 +1,4 @@
 itbmobile.ChatterView = Backbone.View.extend({
-
-    // events:{
-    //     "click #showMeBtn":"showMeBtnClick"
-    // },
     render: function () {
         this.el = this.template(this.model.attributes);
 
@@ -279,8 +275,6 @@ var chatterOperate = {
         var text1 = text.replace(/\n/g, '<br />');
         var panel = fobj.find("[myid='addcommentDIV']").eq(0);
         var path = '/' + client.apiVersion + "/chatter/feed-items/" + feedID + "/comments?text=New+comment";
-        //  /services/data/v28.0/chatter/feed-items/0D5D0000000DaSbKAK/comments?text=New+comment
-
         var info = { "body":
         {
             "messageSegments": [
@@ -342,6 +336,7 @@ var chatterOperate = {
             itbmobile.chatterView = new itbmobile.ChatterView({ model: chatter });
             itbmobile.chatterView.render();
             $("#content").html(itbmobile.chatterView.el);
+            itbmobile.chatterView.el = $("#content").html();
             $(window).bind("scroll", function () {
 
                 if (window.location.href.indexOf("#chatter") == -1) {
@@ -397,7 +392,6 @@ var chatterOperate = {
 
         var st = chatterOperate.result.nextPageUrl.split("chatter/feeds/news/")[1];
         var path = '/' + client.apiVersion + "/chatter/feeds/news/" + st;
-        // chatterOperate.result.nextPageUrl;
         client.ajax(path, function (response) {
             $("#bottompanel").hide();
             chatterOperate.resultArr.push(response);
@@ -407,15 +401,11 @@ var chatterOperate = {
             mychatterView = new itbmobile.ChatterView({ model: chatter });
             mychatterView.render();
             var child = $("#content").append(mychatterView.el);
-
-            // $("#content").find("[id='bottompanel']").remove();
-
-
-
+            itbmobile.chatterView.el = $("#content").html();
         }, function (response) {
             //error
             alert("load error");
-            var ddewee = 1;
+          
         });
 
     }
