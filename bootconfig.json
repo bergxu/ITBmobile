@@ -1,0 +1,10 @@
+{
+    "remoteAccessConsumerKey": "3MVG9Gmy2zmPB01qZQFJGoQ27ehyJINwpFO.n6ff0bwbCXNe_vzwY_oyCGhsyigLmjtY6tG6GAP4XGIj3vWsI",
+    "oauthRedirectURI": "http://localhost:8888/force/oauthcallback.html",
+    "oauthScopes": ["api"],
+    "isLocal": true,
+    "startPage": "android_index.html",
+    "errorPage": "error.html",
+    "shouldAuthenticate": true,
+    "attemptOfflineLoad": false
+}
