@@ -122,7 +122,7 @@ var chatterOperate = {
                 $("#content").prepend(content);
                 $("#commentinputDialog").hide();
                 chatterOperate.hideWait();
-
+                $("#content").html(itbmobile.chatterView.el);
                 return;
             }, function (response) {
                 //error
@@ -146,6 +146,7 @@ var chatterOperate = {
             $("#content").prepend(content);
             $("#commentinputDialog").hide();
             chatterOperate.hideWait();
+            $("#content").html(itbmobile.chatterView.el);
         }, function (response) {
             //error
             alert("error");
@@ -168,6 +169,9 @@ var chatterOperate = {
                 obj.src = "images/like.png";
                 likeli.remove();
                 chatterOperate.hideWait();
+
+
+                $("#content").html(itbmobile.chatterView.el);
             });
 
             return;
@@ -190,6 +194,7 @@ var chatterOperate = {
                 obj.src = "images/unlike.png";
                 chatterOperate.hideWait();
 
+                $("#content").html(itbmobile.chatterView.el);
             }, function (response) {
 
                 alert("error");
@@ -216,6 +221,7 @@ var chatterOperate = {
                 obj.src = "images/like.png";
                 likeli.remove();
             });
+            itbmobile.chatterView.el = $("#content").html();
             return;
         }
 
@@ -232,6 +238,7 @@ var chatterOperate = {
             else {
                 commlike.eq(0).prepend(li);
             }
+            itbmobile.chatterView.el = $("#content").html();
 
         }, function (response) {
             //error
@@ -304,6 +311,9 @@ var chatterOperate = {
             }
             $('#commenttxt').val("");
             $("#commentDialog").hide();
+
+            itbmobile.chatterView.el = $("#content").html();
+
         }, function (response) {
             //error
             alert("add error");
@@ -335,7 +345,7 @@ var chatterOperate = {
             chatter.set({ first: 1, user: itbmobile.currentUser, newgroup: false, data: response });
             itbmobile.chatterView = new itbmobile.ChatterView({ model: chatter });
             itbmobile.chatterView.render();
-            $("#content").html(itbmobile.chatterView.el);
+      
             itbmobile.chatterView.el = $("#content").html();
             $(window).bind("scroll", function () {
 
@@ -378,6 +388,10 @@ var chatterOperate = {
             });
             $('#selectGroup').html(li);
             chatterOperate.hideWait();
+
+
+            $("#content").html(itbmobile.chatterView.el);
+
 
         }, function () {
             //error
