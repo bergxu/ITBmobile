@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+        <meta charset="utf-8">
+        <title>ITBmobile</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <!-- For nav bar fixed top -->
+        <style type="text/css">
+            body
+            {
+                padding-top:40px
+            }
+        </style>
+        <link href="lib/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="lib/bootstrap/css/font-awesome.min.css" rel="stylesheet">
+        <link href="lib/jquery.mobile-1.3.1.min.css" rel="stylesheet">
+        <link href="lib/jquery.jqplot.min.css" rel="stylesheet">
+        <link href="css/styles.css" rel="stylesheet">
+        
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+        <!-- <script src="http://use.edgefonts.net/source-sans-pro.js"></script> -->
+
+        <!-- library -->
+        <script src="lib/jquery-1.9.1.min.js"></script>
+        <script src="lib/jquery.mobile-1.3.1.min.js"></script>
+        <script src="lib/underscore-min.js"></script>
+        <script src="lib/backbone-min.js"></script>
+        <script src="lib/forcetk.js"></script>
+        <script src="lib/jquery.popup.js"></script>
+        <script src="lib/jquery.jqplot.min.js"></script>
+        <script src="lib/plugins/jqplot.pieRenderer.min.js"></script>
+        <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+
+        <!-- custom -->
+        <script src="js/app.js"></script>
+        <script src="js/views/shell.js"></script>
+        <script src="js/views/home.js"></script>
+        <script src="js/views/chatter.js"></script>
+        <script src="js/views/timer.js"></script>
+        <script src="js/views/setup.js"></script>
+        <script src="js/models/user.js"></script>
+        <script src="js/models/resource.js"></script>
+        <script src="js/models/vacationPLan.js"></script>
+        <script src="js/models/task.js"></script>
+         <script src="js/models/chatterData.js"></script>
+    </head>
+<body>
+<button onclick="abc()">test</button>
+
+              <div class="btn-group">
+                <button id="btnselectChoice" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" onclick="">Action <span class="caret"></span></button>
+          
+       
+                </div><!-- /btn-group -->
+     
+           <ul id="selectChoice"class="nav nav-tabs nav-stacked" style="position:absolute;z-index:999999; background:white">
+        
+              <li><a href="#">Profile</a></li>
+              <li><a href="#">Messages</a></li>
+            </ul>
+
+  <ul class="nav" role="navigation">
+                    <li class="dropdown">
+                      <a id="drop1" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                      <ul class="dropdown-menu" role="menu" aria-labelledby="drop1">
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="http://google.com">Action</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#anotherAction">Another action</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
+                        <li role="presentation" class="divider"></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
+                      </ul>
+                    </li>
+                </ul>
+
+
+<div class="well" style="position:fixed; bottom:0px; height:35px; width:100%; text-align:center; vertical-align:middle">
+loading.....
+</div>
+    <!-- Button to trigger modal -->
+    <a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>
+     
+
+    <!-- Modal -->
+    <div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-header" onclick="">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Modal header</h3>
+    </div>
+    <div class="modal-body">
+    <p>One fine body…</p>
+    </div>
+    <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button class="btn btn-primary">Save changes</button>
+    </div>
+    </div>
+
+
+
+<div class="well" cid="0D5M000000ABsEJKA1">
+<div class="panel">
+<div id="box1" style=" width:50px;">
+<img id="myimg" src="https://c.cs7.content.force.com/profilephoto/005/T" class="img-rounded" style="padding: 2px; height:30px; width:30px"></div>
+  <div id="box2" style="-webkit-box-flex:1; ">
+  
+  
+        <form class="form-search">
+          <img src="img\group.gif">
+          <span style="font-size:1.5em; font-weight: bold; color: #1574B9;" id="myname">Zongyuan</span>
+  <div id="mytext">New post89899</div>
+</form>
+  <form class="form-search">
+ 
+ <a href="javascript:void(0)" ><i class="icon-comment-alt icon-2x" onclick="addonecomment(this)"></i></a>&nbsp;&nbsp; <a href="#"><i class="icon-thumbs-up icon-2x"></i></a>
+</form>
+
+<!--add comment !-->
+<div myid="addcommentDIV">
+  <div ><input myid="commentinput" type="text" value="" /></div>
+  <div> <button class="btn" data-dismiss="modal" aria-hidden="true" onclick="hideAddonecomment(this)">Close</button>
+    <button class="btn btn-primary">Save</button>
+    </div>
+    </div>
+
+    <!--end comment !-->
+  <div class="well" myid="commentpanel">
+  eewerr44
+  </div>
+  
+  </div>
+  <div id="box3" style="width:50px;">lv6</div>
+  </div>
+ </div>
+
+
+
+
+</body>
+</html>
+<script>
+    function test() {
+
+
+        $('#myModal').modal({ keyboard: true });
+
+    };
+
+    function addonecomment(obj) {
+
+        $(obj).parents('[cid]').find("[myid='addcommentDIV']").eq(0).show();
+
+        var dd = $(obj).parents('[cid]').find("[myid='commentinput']").eq(0);
+        alert(dd.length);
+    }
+
+    function hideAddonecomment(obj) {
+        $(obj).parent().parent().hide();
+
+    }
+
+    $("#selectChoice li").bind("click", function () {
+        $("#btnselectChoice").html($(this).text()+' <span class="caret"></span>');
+    });
+
+    function getIE(e) {
+        var t = e.offsetTop;
+        var l = e.offsetLeft;
+        var w = e.offsetWidth;
+        var h = e.offsetHeight;
+        while (e = e.offsetParent) {
+            t += e.offsetTop;
+            l += e.offsetLeft;
+        }
+
+        return { top: t, left: l, height: h, width: w };
+       
+    }
+
+    function showGroupChoicePanel() {
+   var ad=getIE($("#btnselectChoice").get(0));
+   document.getElementById("selectChoice").style.left = ad.left+"px";
+   document.getElementById("selectChoice").style.top = (ad.top + ad.height) + "px";
+    }
+</script>
