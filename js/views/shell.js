@@ -36,8 +36,20 @@ itbmobile.ShellView = Backbone.View.extend({
 
     openwin: function (n)
     {
-        n.addClass("navmenuanimation");
-        n.css("left", 0+"px");
+		n.css("left", 0+"px");
+    	/*$(".navanimtor").css("transition", "transform 1s").css("transform", "translateX(" + sw +"px"+ ")");
+    	$(".navanimtor").css("-webkit-transition", "-webkit-transform 1s").css("-webkit-transform", "translateX(" + sw +"px"+ ")");
+    	$(".navanimtor").css("-moz-transition", "-moz-transform 1s").css("-moz-transform", "translateX(" + sw +"px"+ ")");*/
+		/*$('#navmenu').tween({
+		   left:{
+              start: 0-sw,
+              stop: 0,
+              time: 0,
+              units: 'px',
+              duration: 1
+           }
+        });
+       $.play();*/
     },
 
     openwinlogo: function ()
@@ -48,8 +60,21 @@ itbmobile.ShellView = Backbone.View.extend({
 
     hidewin: function (n)
     {
-        var sw = n.outerWidth(true);
-        n.css("left", "-"+sw+"px");
+    	n.css("left", "-"+sw+"px");
+    	/*$(".navanimtor").css("transition", "transform 1s").css("transform", "translateX("+ "-" + sw +"px"+ ")");
+    	$(".navanimtor").css("-webkit-transition", "-webkit-transform 1s").css("-webkit-transform", "translateX("+ "-" + sw +"px"+ ")");
+    	$(".navanimtor").css("-moz-transition", "-moz-transform 1s").css("-moz-transform", "translateX("+ "-" + sw +"px"+ ")");*/
+       /*$('#navmenu').clear();
+       $('#navmenu').tween({
+          left:{
+             start: 0,
+             stop: "-"+sw,
+             time: 0,
+             units: 'px',
+             duration: 1
+          }
+        });
+       $.play();*/
     },
 
     hidewinlogo: function ()
@@ -60,10 +85,12 @@ itbmobile.ShellView = Backbone.View.extend({
 
     init: function ()
     {
-        var sw=parseInt( $(window).width()*2/3);
+        sw=parseInt( $(window).width()*2/3);
         var navmenu =  $('#navmenu', this.el);
         navmenu.css("width", sw+"px");
         navmenu.css("left", "-"+sw+"px");
+    	 //navmenu.addClass("navanimtor");
+    	 navmenu.addClass("navmenuanimation");
                 
         var that = this;
         $("#mainpage").bind("swiperight",function()
