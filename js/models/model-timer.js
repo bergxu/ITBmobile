@@ -55,6 +55,13 @@ itbmobile.TimerData = Backbone.Model.extend({
 	    cdCopy.setDate(d+7);
 	    this.setDateData(cdCopy);
     },
+
+    goSpecificWeekDay: function (day){
+    	var todayDayStr = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+    	var index = todayDayStr.indexOf(day);
+    	this.set('selectedDay', this.get('rangeDateBegin') + index);
+    },
+
     setDateData:function(today){
     	console.log("TimeDate setDateData");
 		var todayDay = today.getDay();
@@ -73,9 +80,6 @@ itbmobile.TimerData = Backbone.Model.extend({
     	this.set('rangeDateBegin',this.dateToString(rangeDateBegin,2));
     	this.set('rangeDateEnd',this.dateToString(rangeDateEnd,2));
     	console.log('baf'+this.get('currentDay'));
-    	/*if(itbmobile.timecardCollection){
-			itbmobile.timecardCollection.loadCards();
-    	}*/
     }
 });
 

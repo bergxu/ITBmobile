@@ -14,7 +14,8 @@
 <div class="page_cell1"><!--%= weekDay %-->
 	<div class="headercenter">
 		<label for="week_Day">Week Day</label>
-		<select id="week_Day" value="<%= weekDay %>">
+		<!-- select id="week_Day" value="<%= weekDay %>" -->
+		<select id="week_Day" onchange="itbmobile.timerdataview.goSpecificWeekDay()">
 		    <option value="">Choose a week day</option>
 		    <option value="Sun">Sunday</option>
 		    <option value="Mon">Monday</option>

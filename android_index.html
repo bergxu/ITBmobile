@@ -4,311 +4,71 @@
 
         <title>ITBmobile</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<!-- custom  timer component layout template -->
+		<script type="text/template" id="tcitem-template">
+	    	<div class="tc-item">
+		        <div class="span3">
+		        	<% if(Engagement__c){%>
+		        		<span><%= Engagement__r.Name %></span>
+		        	<%}else{%>
+		        		<span><%= RecordType.DeveloperName %></span>
+		        	<%}%>
+		        	<span class="engagementEdit"></span>
+		        </div>
+		        <div class="span3"><%= weekTotal %></div>
+		        <div class="span3"><%= Status__c %></div>
+		        <div class="span3"></div>
+		        <div class="span2"></div>
+		        <div class="span2">role</div>
+		        <div class="span2">startTime</div>
+		        <div class="span2">breakTime</div>
+		        <div class="span2">endTime</div>
+		        <div class="span2">totalHours</div>
+	        </div>
+	    </script>
+	    <script type="text/template" id="teitem-template">
+	        <div class="span2"></div>
+	        <div class="span2">
+	        	<% if(Resource_Assignment__r){ %> 
+	        		<%= Resource_Assignment__r.Name %> 
+	        	<% }else{ %>
+	        		<%= Internal_Type__c %>
+	        	<%}%> 
+	        </div>
+	        <div class="span2"><%= Start_Time__c %></div>
+	        <div class="span2"><%= Breaks__c %></div>
+	        <div class="span2"><%= End_Time__c %></div>
+	        <div class="span2"><%= Total_Hours__c %></div>
+	    </script>
+	    <script type="text/template" id="tcEng-template">
+	        <select class="engagementPicklist">
+	        	<option>-None-</option>
+	        	<option>-Internal-</option>
+		        <% _.each(models,function(engagement){ %>
+		        	<option><%= engagement.get('Name') %></option>
+		        <% });%>
+	        </select>
+	    </script>
+	    <script type="text/template" id="teRa-template">
+	        <select class="raPicklist">
+	        	<option>-None-</option>
+		        <% _.each(models,function(ra){ %>
+		        	<option><%= ra.get('Role_Name__c') %></option>
+		        <% });%>
+	        </select>
+	    </script>
+
+        <!-- load css -->
+        <link href="css/styles.css" rel="stylesheet">
         <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-        <!-- For nav bar fixed top -->
-        <style type="text/css">
-       
- #navmenu {
-    -webkit-box-sizing: border-box;
-    border-width: 2px 2px 2px 0px;
-    border-style: solid;
-    border-color: #000;
-    width: 500px;
-    height: 100%;
-    background-color: white;
-    position:fixed;
-    top: 0;
-    left: 0;
-    z-index: 999888;
-}
-
-.navmenuanimation {
-    -webkit-transition: left .5s ease-in;
-    position: absolute;
-    top: 0px;
-    z-index: 999888;
-    display: block;
-}
-
-#myTaskSection .table td {
-    vertical-align: inherit;
-}
-   .panel
-        {
-             -webkit-box-sizing:border-box;  display: -webkit-box; -webkit-box-orient: horizontal;  width:100%;background-color: #F5F5F5
-        }
-        
-        
-        body,button,input,select,textarea{ Arial,Helvetica,sans-serif;_font-family:"SimSun";}body,h1,h2,h3,h4,h5,h6,dl,dt,dd,ul,ol,li,th,td,p,blockquote,pre,form,fieldset,legend,input,button,textarea,hr{margin:0; padding:0;}
-table{border-collapse:collapse;border-spacing:0;}
-li{list-style:none;}
-fieldset,img{border:0;}
-q:before,q:after{content:'';}
-.horizontalpanel
-{
--webkit-box-sizing:border-box;  display: -webkit-box; -webkit-box-orient: horizontal;  width:100%; background-image: url('images/titlebg.png'); background-repeat: repeat-x;height:40px
-}
- .WB_feed .WB_name {
-font-size: 14px;
-font-weight: bold;
-line-height: 16px;
-}
-
-.W_ico20 {
-display: inline-block;
-width: 30px;
-height: 30px;
-background-image: url("images/icon.png");
-background-repeat: no-repeat;
-}
-.icon_praised_b, .icon_praised_bc {
-height: 16px;
-background-position: -70px 0;
-vertical-align: -5px;
-}
-.wchorizontalpanel
-{
--webkit-box-sizing:border-box;  display: -webkit-box; -webkit-box-orient: horizontal;  width:100%;background-image:url(images/wcbg.png);  background-repeat:repeat-x
-}
-.fcc
-{
-    display: -webkit-box;-webkit-box-flex:1; font-weight: bold; color: #31373B; font-size: 6px; text-align: center; vertical-align: bottom;  -webkit-box-orient: horizontal; -webkit-box-pack: center;-webkit-box-align: center;
-}
-
-#fullbg {
-    background-color: Gray;
-    left: 0px;
-    opacity: 0.5;
-    position: absolute;
-    top: 0px;
-    z-index:9000;
-    filter: alpha(opacity=50); /* IE6 */
-    -moz-opacity: 0.1; /* Mozilla */
-    -webkit-opacity: 0.1; /* Safari */
-	height:100%;
-	width:100%;
-	display:none
-}
-
-#floatingBarsG{
-position:relative;
-width:62px;
-height:77px}
-
-.blockG{
-position:absolute;
-background-color:#FFFFFF;
-width:10px;
-height:24px;
--moz-border-radius:8px 8px 0 0;
--moz-transform:scale(0.4);
--moz-animation-name:fadeG;
--moz-animation-duration:1.04s;
--moz-animation-iteration-count:infinite;
--moz-animation-direction:linear;
--webkit-border-radius:8px 8px 0 0;
--webkit-transform:scale(0.4);
--webkit-animation-name:fadeG;
--webkit-animation-duration:1.04s;
--webkit-animation-iteration-count:infinite;
--webkit-animation-direction:linear;
--ms-border-radius:8px 8px 0 0;
--ms-transform:scale(0.4);
--ms-animation-name:fadeG;
--ms-animation-duration:1.04s;
--ms-animation-iteration-count:infinite;
--ms-animation-direction:linear;
--o-border-radius:8px 8px 0 0;
--o-transform:scale(0.4);
--o-animation-name:fadeG;
--o-animation-duration:1.04s;
--o-animation-iteration-count:infinite;
--o-animation-direction:linear;
-border-radius:8px 8px 0 0;
-transform:scale(0.4);
-animation-name:fadeG;
-animation-duration:1.04s;
-animation-iteration-count:infinite;
-animation-direction:linear;
-}
-
-#rotateG_01{
-left:0;
-top:28px;
--moz-animation-delay:1.1700000000000002s;
--moz-transform:rotate(-90deg);
--webkit-animation-delay:1.1700000000000002s;
--webkit-transform:rotate(-90deg);
--ms-animation-delay:1.1700000000000002s;
--ms-transform:rotate(-90deg);
--o-animation-delay:1.1700000000000002s;
--o-transform:rotate(-90deg);
-animation-delay:1.1700000000000002s;
-transform:rotate(-90deg);
-}
-
-#rotateG_02{
-left:8px;
-top:10px;
--moz-animation-delay:1.04s;
--moz-transform:rotate(-45deg);
--webkit-animation-delay:1.04s;
--webkit-transform:rotate(-45deg);
--ms-animation-delay:1.04s;
--ms-transform:rotate(-45deg);
--o-animation-delay:1.04s;
--o-transform:rotate(-45deg);
-animation-delay:1.04s;
-transform:rotate(-45deg);
-}
-
-#rotateG_03{
-left:26px;
-top:3px;
--moz-animation-delay:0.9099999999999999s;
--moz-transform:rotate(0deg);
--webkit-animation-delay:0.9099999999999999s;
--webkit-transform:rotate(0deg);
--ms-animation-delay:0.9099999999999999s;
--ms-transform:rotate(0deg);
--o-animation-delay:0.9099999999999999s;
--o-transform:rotate(0deg);
-animation-delay:0.9099999999999999s;
-transform:rotate(0deg);
-}
-
-#rotateG_04{
-right:8px;
-top:10px;
--moz-animation-delay:0.78s;
--moz-transform:rotate(45deg);
--webkit-animation-delay:0.78s;
--webkit-transform:rotate(45deg);
--ms-animation-delay:0.78s;
--ms-transform:rotate(45deg);
--o-animation-delay:0.78s;
--o-transform:rotate(45deg);
-animation-delay:0.78s;
-transform:rotate(45deg);
-}
-
-#rotateG_05{
-right:0;
-top:28px;
--moz-animation-delay:0.65s;
--moz-transform:rotate(90deg);
--webkit-animation-delay:0.65s;
--webkit-transform:rotate(90deg);
--ms-animation-delay:0.65s;
--ms-transform:rotate(90deg);
--o-animation-delay:0.65s;
--o-transform:rotate(90deg);
-animation-delay:0.65s;
-transform:rotate(90deg);
-}
-
-#rotateG_06{
-right:8px;
-bottom:7px;
--moz-animation-delay:0.52s;
--moz-transform:rotate(135deg);
--webkit-animation-delay:0.52s;
--webkit-transform:rotate(135deg);
--ms-animation-delay:0.52s;
--ms-transform:rotate(135deg);
--o-animation-delay:0.52s;
--o-transform:rotate(135deg);
-animation-delay:0.52s;
-transform:rotate(135deg);
-}
-
-#rotateG_07{
-bottom:0;
-left:26px;
--moz-animation-delay:0.39s;
--moz-transform:rotate(180deg);
--webkit-animation-delay:0.39s;
--webkit-transform:rotate(180deg);
--ms-animation-delay:0.39s;
--ms-transform:rotate(180deg);
--o-animation-delay:0.39s;
--o-transform:rotate(180deg);
-animation-delay:0.39s;
-transform:rotate(180deg);
-}
-
-#rotateG_08{
-left:8px;
-bottom:7px;
--moz-animation-delay:1.3s;
--moz-transform:rotate(-135deg);
--webkit-animation-delay:1.3s;
--webkit-transform:rotate(-135deg);
--ms-animation-delay:1.3s;
--ms-transform:rotate(-135deg);
--o-animation-delay:1.3s;
--o-transform:rotate(-135deg);
-animation-delay:1.3s;
-transform:rotate(-135deg);
-}
-
-@-moz-keyframes fadeG{
-0%{
-background-color:#962396}
-
-100%{
-background-color:#FFFFFF}
-
-}
-
-@-webkit-keyframes fadeG{
-0%{
-background-color:#962396}
-
-100%{
-background-color:#FFFFFF}
-
-}
-
-@-ms-keyframes fadeG{
-0%{
-background-color:#962396}
-
-100%{
-background-color:#FFFFFF}
-
-}
-
-@-o-keyframes fadeG{
-0%{
-background-color:#962396}
-
-100%{
-background-color:#FFFFFF}
-
-}
-
-@keyframes fadeG{
-0%{
-background-color:#962396}
-
-100%{
-background-color:#FFFFFF}
-
-}
-     body
-            {
-                padding-top:40px
-            }
-            
-            
-        </style>
         <link href="lib/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
         <link href="lib/bootstrap/css/font-awesome.min.css" rel="stylesheet">
         <link href="lib/jquery.mobile-1.3.1.min.css" rel="stylesheet">
         <link href="lib/jquery.jqplot.min.css" rel="stylesheet">
-        <link href="css/styles.css" rel="stylesheet">
+        <link href="lib/MobiPick/css/mobipick.css" rel="stylesheet">
 
+		 <!-- load lib -->
         <script src="lib/jquery-2.0.3.min.js"></script>
         <script src="lib/jquery.mobile-1.3.1.min.js"></script>
         <script src="lib/underscore-min.js"></script>
@@ -317,6 +77,9 @@ background-color:#FFFFFF}
         <script src="lib/jquery.jqplot.min.js"></script>
         <script src="lib/plugins/jqplot.pieRenderer.min.js"></script>
         <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+        <script src="lib/MobiPick/js/xdate.js"></script>
+        <script src="lib/MobiPick/js/xdate.i18n.js"></script>
+        <script src="lib/MobiPick/js/mobipick.js"></script>
         <script src="lib/jstween-1.1.min.js"></script>
 
         <!-- Include salesforce mobile sdk -->
@@ -337,6 +100,9 @@ background-color:#FFFFFF}
         <script src="js/models/vacationPlan.js"></script>
         <script src="js/models/task.js"></script>
         <script src="js/models/chatterData.js"></script>
+        <script src="js/models/model-timer.js"></script>
+        
+       
     </head>
 
     <body id="mainpage">

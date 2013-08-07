@@ -17,7 +17,7 @@ itbmobile.TimerView = Backbone.View.extend({
 		itbmobile.timedata.loadData();
 		itbmobile.timecardcollectionview = new itbmobile.TimecardCollectionView({model:itbmobile.timecardCollection});
 		this.listenTo(this.model, 'change:rangeDateEnd', this.render);
-		
+    	this.model.on('change:selectedDay', this.render, this);
 	},
 
     render:function () {
@@ -41,7 +41,12 @@ itbmobile.TimerView = Backbone.View.extend({
 	goNextWeek : function() {
 		this.weekChange = true;
 		this.model.goNext();
-	}
+	},
+
+	goSpecificWeekDay: function (){
+		var checkValue=$("#week_Day").val();
+		this.model.goSpecificWeekDay(checkValue);
+    }
 });
 
 itbmobile.TimecardCollectionView = Backbone.View.extend({
@@ -64,7 +69,6 @@ itbmobile.TimecardCollectionView = Backbone.View.extend({
 		});
 
 		tcView.render();
-		$(tcView.el).append(tcView.entrycollectionview.render().el);
 		$('#tcContainer').append(tcView.el);
     },
 
@@ -89,14 +93,14 @@ itbmobile.TimecardView = Backbone.View.extend({
     initialize: function() {
       this.listenTo(this.model, 'change', this.render);
       this.listenTo(this.model, 'destroy', this.remove);
-      this.entrycollectionview = new itbmobile.timeentryCollectionView({collection:this.model.get('teList')});
     },
 
     render: function() {
       this.model.calculateWeekTotal();
-      this.$el.html(this.template(this.model.toJSON()));
+      this.$el.html(this.template(this.model.attributes));
       this.addEngagementPickList();
       //this.model.calculateWeekTotal();
+      this.addTimeentryCollectionView();
       return this;
     },
 
@@ -108,6 +112,11 @@ itbmobile.TimecardView = Backbone.View.extend({
 	    var engagementCollectionView = new itbmobile.EngagementCollectionView({
 	    	collection:itbmobile.engagementCollection});
 	    $(this.el).find('.engagementEdit').html(engagementCollectionView.render().el);
+    },
+    
+    addTimeentryCollectionView: function (){
+		var timeentrycollectionview = new itbmobile.timeentryCollectionView({collection:this.model.get('teList')});
+		$(this.el).append(timeentrycollectionview.render().el);
     }
 });
 

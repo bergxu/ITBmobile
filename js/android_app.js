@@ -95,22 +95,25 @@ itbmobile.Router = Backbone.Router.extend({
     },
 
     timer: function () {
-        if (!itbmobile.timerView) {
-            itbmobile.timerView = new itbmobile.TimerView();
-            itbmobile.timerView.render();
-        } else {
-            console.log('reusing home view');
-            itbmobile.timerView.delegateEvents(); // delegate events when the view is recycled
-        }
-        this.$content.html(itbmobile.timerView.el);
-
         if (!itbmobile.timerHeaderView) {
             itbmobile.timerHeaderView = new itbmobile.TimerHeaderView();
             itbmobile.timerHeaderView.render();
         } else {
             itbmobile.timerHeaderView.delegateEvents(); // delegate events when the view is recycled
-        }
+         }
         this.$pageHeader.html(itbmobile.timerHeaderView.el);
+
+        if (!itbmobile.timerdataview) {
+            itbmobile.timedata = new itbmobile.TimerData();
+            itbmobile.timerdataview = new itbmobile.TimerView({model:itbmobile.timedata});
+            itbmobile.timerdataview.render();
+        } else {
+            console.log('reusing timer view');
+            itbmobile.timerdataview.delegateEvents(); // delegate events when the view is recycled
+		}   
+        this.$content.html(itbmobile.timerdataview.el);
+        $('#week_Date').mobipick();                                                                                                                                             
+        $('#week_Day').selectmenu();
     },
 
     setup: function () {
@@ -141,9 +144,10 @@ $(document).on("ready", function () {
 
     // The version of the REST API you wish to use in your app.
     var apiVersion = "v28.0";
-    var client ;
     var debugMode = true;
     var logToConsole = cordova.require("salesforce/util/logger").logToConsole;
+    var client ;
+	 var uId = '';
 
     function onDeviceReady() {
         logToConsole("onDeviceReady: Cordova ready");
@@ -164,6 +168,12 @@ $(document).on("ready", function () {
         client = new forcetk.Client(credsData.clientId, credsData.loginUrl, null,
             cordova.require("salesforce/plugin/oauth").forcetkRefresh);
         client.setSessionToken(credsData.accessToken, apiVersion, credsData.instanceUrl);
+        uId = credsData.id;
+        if(uId){
+            uId = /id\/\w+?\/(\w+)$/.exec(uId);
+            if(uId && uId[1])
+            uId = uId[1];
+		 }
         //client.setRefreshToken(credsData.refreshToken);
         //client.setUserAgentString(credsData.userAgent);
 
