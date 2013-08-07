@@ -1,0 +1,13 @@
+ios mobile lib:
+    wait to add~~~
+
+android mobile lib:
+    cordova-2.3.0.js
+    cordova.force.js  
+    forcetk.mobilesdk.js(but now,we use forcetk.js instans of it.This place needs attention!)
+
+pc browser lib:
+    forcetk.js  
+
+NOTICE:
+    when you used forcedroid(node.js nmp) create a android or ios project template, that will contain cordova-2.3.0.js cordova.force.js forcetk.mobilesdk.js three js file.You need care for them.
