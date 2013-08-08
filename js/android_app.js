@@ -112,8 +112,8 @@ itbmobile.Router = Backbone.Router.extend({
             itbmobile.timerdataview.delegateEvents(); // delegate events when the view is recycled
 		}   
         this.$content.html(itbmobile.timerdataview.el);
-        $('#week_Date').mobipick();                                                                                                                                             
-        $('#week_Day').selectmenu();
+        //$('#week_Date').mobipick();                                                                                                                                             
+        //$('#week_Day').selectmenu();
     },
 
     setup: function () {
@@ -168,7 +168,7 @@ $(document).on("ready", function () {
         client = new forcetk.Client(credsData.clientId, credsData.loginUrl, null,
             cordova.require("salesforce/plugin/oauth").forcetkRefresh);
         client.setSessionToken(credsData.accessToken, apiVersion, credsData.instanceUrl);
-        uId = credsData.id;
+        uId = credsData.identityUrl;
         if(uId){
             uId = /id\/\w+?\/(\w+)$/.exec(uId);
             if(uId && uId[1])

@@ -16,16 +16,25 @@ itbmobile.TimerView = Backbone.View.extend({
 	initialize:function() {
 		itbmobile.timedata.loadData();
 		itbmobile.timecardcollectionview = new itbmobile.TimecardCollectionView({model:itbmobile.timecardCollection});
-		this.listenTo(this.model, 'change:rangeDateEnd', this.render);
-    	this.model.on('change:selectedDay', this.render, this);
+
+		//this.listenTo(this.model, 'change:rangeDateEnd', this.render);
+    	this.model.on('change:selectedDate', this.render, this);
+		this.model.on('reset', this.remove, this);
 	},
 
     render:function () {
+    	console.log("timer view rander");
     	this.$el.html(this.template(this.model.attributes));
-		if(this.weekChange){
-			itbmobile.timecardCollection.loadCards();
-			this.weekChange = false;
-		}
+
+    	//load timecard item
+		itbmobile.timecardCollection.loadCards();
+
+		var that = this;
+    	$("#week_Day").val(itbmobile.timedata.get('weekDay'));
+		$("#week_Day").change(function(){
+			that.goSpecificWeekDay();
+		});
+
 		return this;
     },
 
@@ -34,18 +43,17 @@ itbmobile.TimerView = Backbone.View.extend({
 	},
 
 	goLastWeek : function() {
-		this.weekChange = true;
+		timerDateChanged = true;
 		this.model.goPrev();
 	},
 
 	goNextWeek : function() {
-		this.weekChange = true;
+		timerDateChanged = true;
 		this.model.goNext();
 	},
 
 	goSpecificWeekDay: function (){
-		var checkValue=$("#week_Day").val();
-		this.model.goSpecificWeekDay(checkValue);
+		this.model.goSpecificWeekDay();
     }
 });
 
@@ -107,7 +115,7 @@ itbmobile.TimecardView = Backbone.View.extend({
     remove: function() {
       this.model.destroy();
     },
-
+    
     addEngagementPickList:function(){
 	    var engagementCollectionView = new itbmobile.EngagementCollectionView({
 	    	collection:itbmobile.engagementCollection});

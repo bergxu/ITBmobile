@@ -103,17 +103,20 @@ itbmobile.Router = Backbone.Router.extend({
          }
         this.$pageHeader.html(itbmobile.timerHeaderView.el);
 
-        if (!itbmobile.timerdataview) {
+        if (!itbmobile.timerView) {
             itbmobile.timedata = new itbmobile.TimerData();
-            itbmobile.timerdataview = new itbmobile.TimerView({model:itbmobile.timedata});
-            itbmobile.timerdataview.render();
+            itbmobile.timerView = new itbmobile.TimerView({model:itbmobile.timedata});
+            itbmobile.timerView.render();
         } else {
             console.log('reusing timer view');
-            itbmobile.timerdataview.delegateEvents(); // delegate events when the view is recycled
+            itbmobile.timerView.delegateEvents(); // delegate events when the view is recycled
 		}   
-        this.$content.html(itbmobile.timerdataview.el);
-        $('#week_Date').mobipick();                                                                                                                                             
-        $('#week_Day').selectmenu();
+        this.$content.html(itbmobile.timerView.el);
+        //$('#week_Date').mobipick();                                                                                                                                             
+        //$('#week_Day').selectmenu();
+		 $("#week_Day").change(function(){
+			 itbmobile.timerView.goSpecificWeekDay();
+		 });
     },
 
     setup: function () {

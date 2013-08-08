@@ -4,28 +4,25 @@
 		<!--<a href="#" data-role="button" data-icon="arrow-l" data-iconpos="notext" data-theme="b" data-iconshadow="false" data-inline="true">Arrow left</a> -->
         <i class="icon-backward icon-2x" id="goLastWeek"></i>
 		<label for="weekDate">Week Ending</label>
-		<input type="text" name="weekDate" id="week_Date" value="<%= rangeDateEnd %>"/>
+		<input type="date" name="weekDate" id="week_Date" value="<%= rangeDateEnd %>"/>
 		<!--<a href="#" data-role="button" data-icon="arrow-r" data-iconpos="notext" data-theme="b" data-iconshadow="false" data-inline="true">Arrow right</a> -->
         <i class="icon-forward icon-2x" id="goNextWeek"></i>
 	</div>
 </div>
 
 <!--day picklist-->
-<div class="page_cell1"><!--%= weekDay %-->
-	<div class="headercenter">
-		<label for="week_Day">Week Day</label>
-		<!-- select id="week_Day" value="<%= weekDay %>" -->
-		<select id="week_Day" onchange="itbmobile.timerdataview.goSpecificWeekDay()">
-		    <option value="">Choose a week day</option>
-		    <option value="Sun">Sunday</option>
-		    <option value="Mon">Monday</option>
-		    <option value="Tue">Tuesday</option>
-		    <option value="Wed">Wednesday</option>
-		    <option value="Thu">Thursday</option>
-		    <option value="Fri">Friday</option>
-		    <option value="Sat">Saturday</option>
-		</select>
-	</div>
+<div class="headercenter">
+	<label for="week_Day">Week Day</label>
+	<select class="test" id="week_Day">
+	    <option value="All">All Week Day</option>
+	    <option value="Sun">Sunday</option>
+	    <option value="Mon">Monday</option>
+	    <option value="Tue">Tuesday</option>
+	    <option value="Wed">Wednesday</option>
+	    <option value="Thu">Thursday</option>
+	    <option value="Fri">Friday</option>
+	    <option value="Sat">Saturday</option>
+	</select>
 </div>
 
 <!--content-->

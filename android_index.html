@@ -5,28 +5,35 @@
         <title>ITBmobile</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<!-- custom  timer component layout template -->
+		<!-- custom  timer component layout template-->
+		<!-- time card style (only show title)-->
 		<script type="text/template" id="tcitem-template">
 	    	<div class="tc-item">
-		        <div class="span3">
-		        	<% if(Engagement__c){%>
-		        		<span><%= Engagement__r.Name %></span>
-		        	<%}else{%>
-		        		<span><%= RecordType.DeveloperName %></span>
-		        	<%}%>
-		        	<span class="engagementEdit"></span>
-		        </div>
-		        <div class="span3"><%= weekTotal %></div>
-		        <div class="span3"><%= Status__c %></div>
-		        <div class="span3"></div>
-		        <div class="span2"></div>
-		        <div class="span2">role</div>
-		        <div class="span2">startTime</div>
-		        <div class="span2">breakTime</div>
-		        <div class="span2">endTime</div>
-		        <div class="span2">totalHours</div>
+	    		<div>
+			        <div class="span3 engagementEdit">
+			        	<% if(Engagement__c){%>
+			        		<span><%= Engagement__r.Name %></span>
+			        	<%}else{%>
+			        		<span><%= RecordType.DeveloperName %></span>
+			        	<%}%>
+			        	<!--span class="engagementEdit"></span-->
+			        </div>
+			        <div class="span3"><%= weekTotal %></div>
+			        <div class="span3"><%= Status__c %></div>
+			        <div class="span3"></div>
+				</div>
+				<div>
+			        <div class="span2"></div>
+			        <div class="span2">role</div>
+			        <div class="span2">startTime</div>
+			        <div class="span2">breakTime</div>
+			        <div class="span2">endTime</div>
+			        <div class="span2">totalHours</div>
+				</div>
 	        </div>
 	    </script>
+
+		<!-- time entry of time card style (show the of solq callback)-->
 	    <script type="text/template" id="teitem-template">
 	        <div class="span2"></div>
 	        <div class="span2">
@@ -34,13 +41,14 @@
 	        		<%= Resource_Assignment__r.Name %> 
 	        	<% }else{ %>
 	        		<%= Internal_Type__c %>
-	        	<%}%> 
+	        	<% } %> 
 	        </div>
 	        <div class="span2"><%= Start_Time__c %></div>
 	        <div class="span2"><%= Breaks__c %></div>
 	        <div class="span2"><%= End_Time__c %></div>
 	        <div class="span2"><%= Total_Hours__c %></div>
 	    </script>
+
 	    <script type="text/template" id="tcEng-template">
 	        <select class="engagementPicklist">
 	        	<option>-None-</option>
@@ -50,6 +58,7 @@
 		        <% });%>
 	        </select>
 	    </script>
+
 	    <script type="text/template" id="teRa-template">
 	        <select class="raPicklist">
 	        	<option>-None-</option>
