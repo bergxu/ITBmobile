@@ -1,31 +1,9 @@
-/**
- * do best in mvc
- * 
- */
-/**
- * TimeDate : as a model, for TimerView(the container).
- * 
- */
-itbmobile.TimerData = Backbone.Model.extend({
+itbmobile.TimerViewData = Backbone.Model.extend({
     initialize:function () {
     	var today = new Date();
     	this.setDateData(today);
 	},
 	
-	/**after construction, we need loadData.
-	 *~~~~here can be optimize!!!
-	 *when load it & where load it?
-	**/
-	loadData: function(){
-    	//create timecardCollection data for timecardView init
-		itbmobile.timecardCollection = new itbmobile.TimeCardCollection();
-
-		//create engagementCollection(model) for engagementView init
-		//at the same time loadDate
-		itbmobile.engagementCollection = new itbmobile.EngagementCollection();
-       itbmobile.engagementCollection.loadData();
-	},
-
 	dateToString:function(d,t){
     	d = new Date(d);
     	var dm = 1 + d.getMonth();
@@ -92,29 +70,35 @@ itbmobile.TimerData = Backbone.Model.extend({
     	rangeDateEnd.setDate(todayDate + 6 - todayDay);
 
     	this.set('currentDay',today);
-    	this.set('rangeEnd',this.dateToString(rangeDateEnd,1));
     	this.set('rangeDateBegin',this.dateToString(rangeDateBegin,2));
     	this.set('rangeDateEnd',this.dateToString(rangeDateEnd,2));
     	this.set('selectedDate', ' ');
     }
 });
 
-/**
- * TimeCarCollection : as a model, for TimeCarCollection.
- * internal need contain several subcomponent(  TimeCard  )
- */
-itbmobile.TimeCardCollection = Backbone.Collection.extend({
+itbmobile.TimeCardItemViewData = Backbone.Model.extend({
+    calculateWeekTotal:function(){
+	    var timeentrys = this.get('timeEntryListData').models;
+	    var total = 0;
+	    _.each(timeentrys,function(te){
+		    total += te.get('Total_Hours__c');
+	    });
+	    this.set({'weekTotal':total,silent:true});
+    }
+});
 
-    model: itbmobile.TimeCard,
+itbmobile.TimeCardListViewData = Backbone.Collection.extend({
+
+    model: itbmobile.TimeCardItemViewData,
 
 	loadCards: function() {
 		console.log('loadCards');
 		var self = this;
 		var dateCondition;
-		if(itbmobile.timedata.get('selectedDate') == ' '){
+		if(itbmobile.timerViewData.get('selectedDate') == ' '){
 			dateCondition = ' ';
 		} else {
-			dateCondition = 'where Date__c = ' + itbmobile.timedata.get('selectedDate') + ' '
+			dateCondition = 'where Date__c = ' + itbmobile.timerViewData.get('selectedDate') + ' '
 		}
 		var soql = 'select Id, End_Date__c, Start_Date__c,Engagement__c,Engagement__r.Name,Engagement__r.Project_Code__c,'
 								+ 'Resource_Assignment__c, RecordType.DeveloperName, Status__c,Approval_Status__c,logYourTime__c,'
@@ -130,9 +114,9 @@ itbmobile.TimeCardCollection = Backbone.Collection.extend({
 									+ 'order by Resource_Assignment__r.Name, Date__c, Start_Time__c)'
 								+ 'from Timecard__c '
 								+ 'where Start_Date__c >= '
-								+ itbmobile.timedata.get('rangeDateBegin')
+								+ itbmobile.timerViewData.get('rangeDateBegin')
 								+ 'and End_Date__c <= '
-								+ itbmobile.timedata.get('rangeDateEnd')
+								+ itbmobile.timerViewData.get('rangeDateEnd')
 								+ 'AND Resource__r.Active__c = true and Resource__r.OwnerId = \''
 								+ uId
 								+ '\' and ownerId = \''
@@ -144,22 +128,26 @@ itbmobile.TimeCardCollection = Backbone.Collection.extend({
 			self.reset();
 			if(response.totalSize > 0){
 				console.log('response size = ' + response.totalSize);
-				var tc, tcData, te, teData;
+				/**
+				 * in this soql will query timeEntry  and timeCard
+				 * so save the data
+				 */
+				var timecard, timecardData, timeEntry, timeEntryData;
 				for (var i = 0, j = response.totalSize; i < j; i++) {
-					tcData = response.records[i];
-					var timeentrys = new itbmobile.TimeEntryCollection();
-					if (tcData.Time_Entries__r.totalSize > 0) {
-						teData = tcData.Time_Entries__r.records;
-						for (var k = 0, t = teData.length; k < t; k++) {
-							te = new itbmobile.TimeEntry(teData[k]);
-							timeentrys.add(te);
+					timecardData = response.records[i];
+					var timeentrys = new itbmobile.TimeEntryListViewData();
+					if (timecardData.Time_Entries__r.totalSize > 0) {
+						timeEntryData = timecardData.Time_Entries__r.records;
+						for (var k = 0, t = timeEntryData.length; k < t; k++) {
+							timeEntry = new itbmobile.TimeEntryItemViewData(timeEntryData[k]);
+							timeentrys.add(timeEntry);
 						}
 					}
 
-					tc = new itbmobile.TimeCard(tcData);
-					tc.set('teList', timeentrys);// whether need this relation or not?
-					console.log('add timecard model');
-					self.add(tc);
+					timecard = new itbmobile.TimeCardItemViewData(timecardData);
+					timecard.set('timeEntryListData', timeentrys);
+
+					self.add(timecard);
 	            }
 	        }
 	        
@@ -171,42 +159,26 @@ itbmobile.TimeCardCollection = Backbone.Collection.extend({
 
 });
 
-itbmobile.TimeCard = Backbone.Model.extend({
-    calculateWeekTotal:function(){
-	    var timeentrys = this.get('teList').models;
-	    var total = 0;
-	    _.each(timeentrys,function(te){
-		    total += te.get('Total_Hours__c');
-	    });
-	    this.set({'weekTotal':total,silent:true});
-    }
+itbmobile.TimeEntryItemViewData = Backbone.Model.extend({
+	initialize:function () {
+	}
 });
 
-
-itbmobile.TimeEntry = Backbone.Model.extend({
-    initialize:function () {
-        
-    }
-});
-
-itbmobile.TimeEntryCollection = Backbone.Collection.extend({
+itbmobile.TimeEntryListViewData = Backbone.Collection.extend({
 	model: itbmobile.TimeEntry,
-    initialize:function(){
+	initialize:function(){
     },
+
 	loadEntrys:function(options) {
-			}
+	}
 });
 
-
-
-
-//////////////////
-itbmobile.Engagement = Backbone.Model.extend({
-    initialize:function () {
-        
-    }
+itbmobile.EngagementItemViewData = Backbone.Model.extend({
+	initialize:function () {
+	}
 });
-itbmobile.EngagementCollection = Backbone.Collection.extend({
+
+itbmobile.EngagementListViewData = Backbone.Collection.extend({
 	model:itbmobile.Engagement,
     initialize:function () {
         
@@ -217,8 +189,8 @@ itbmobile.EngagementCollection = Backbone.Collection.extend({
 			' where Timecard__r.Resource__r.OwnerId =\'' + uId + '\' and Timecard__r.Approval_Status__c = \'Rejected\''+
 			' and Resource_Assignment__c != null'+
 			' and Resource_Assignment__r.Active__c = false'+
-			' and Date__c >= '+itbmobile.timedata.get('rangeDateBegin')+
-			' and Date__c <= '+itbmobile.timedata.get('rangeDateEnd'),
+			' and Date__c >= '+itbmobile.timerViewData.get('rangeDateBegin')+
+			' and Date__c <= '+itbmobile.timerViewData.get('rangeDateEnd'),
 			function(res){
 				console.log(res);
 				var raIds = [];
@@ -240,8 +212,8 @@ itbmobile.EngagementCollection = Backbone.Collection.extend({
 		            'Engagement__r.Country__r.Name,Resource__c,Opportunity_Line_Item_ID__c,Assigned_Budget__c,'+
 		            'Overall_Budget__c,Used_Hours__c,Scheduled_Hours__c,Aggregated_Approved_Hours__c,'+
 		            'Aggregated_Billing_Hours__c,Aggregated_Invoiced_Hours__c,Start_Date__c,End_Date__c '+                                                                                               
-		            'from ITBresourceAssignment__c where Start_Date__c <= '+itbmobile.timedata.get('rangeDateEnd') +  
-		            ' AND (End_Date__c = null or End_Date__c >= '+itbmobile.timedata.get('rangeDateBegin')+
+		            'from ITBresourceAssignment__c where Start_Date__c <= '+itbmobile.timerViewData.get('rangeDateEnd') +  
+		            ' AND (End_Date__c = null or End_Date__c >= '+itbmobile.timerViewData.get('rangeDateBegin')+
 		            ') AND Resource__r.OwnerId = \''+uId+'\' AND Resource__r.Active__c = true'+ 
 					' AND Engagement__r.Status__c != \'Completed\''+
 					' AND Engagement__r.Status__c != \'Cancelled\''+
@@ -277,7 +249,6 @@ itbmobile.EngagementCollection = Backbone.Collection.extend({
 					    	engagement.set('raCollection',racollection);
 					    	self.add(engagement);
 				    	}
-				    	//itbmobile.timecardCollection.loadCards();
 				    },
 					function(response){
 						console.log('load eng err');
@@ -292,15 +263,4 @@ itbmobile.EngagementCollection = Backbone.Collection.extend({
 		);
     }
 
-});
-itbmobile.ResourceAssignment = Backbone.Model.extend({
-    initialize:function () {
-        
-    }
-});
-
-itbmobile.RaCollection = Backbone.Collection.extend({
-	model: itbmobile.ResourceAssignment,
-    initialize:function(){
-    }
 });

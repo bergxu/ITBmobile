@@ -14,28 +14,35 @@ itbmobile.TimerView = Backbone.View.extend({
     },
 
 	initialize:function() {
-		itbmobile.timedata.loadData();
-		itbmobile.timecardcollectionview = new itbmobile.TimecardCollectionView({model:itbmobile.timecardCollection});
+		this.timecardListViewData = new itbmobile.TimeCardListViewData();
+		this.timecardListView = new itbmobile.TimecardListView({model:this.timecardListViewData});
 
-		//this.listenTo(this.model, 'change:rangeDateEnd', this.render);
-    	this.model.on('change:selectedDate', this.render, this);
-		this.model.on('reset', this.remove, this);
+		//this.model.on('change:rangeDateEnd', this.render, this);
+    	//this.model.on('change:selectedDate', this.render, this);
+		//this.model.on('reset', this.remove, this);
 	},
 
     render:function () {
     	console.log("timer view rander");
-    	this.$el.html(this.template(this.model.attributes));
 
-    	//load timecard item
-		itbmobile.timecardCollection.loadCards();
+       this.$el.html(this.template(this.model.attributes));
+
+		this.renderChildren();
 
 		var that = this;
-    	$("#week_Day").val(itbmobile.timedata.get('weekDay'));
+    	$("#week_Day").val(this.model.get('weekDay'));
 		$("#week_Day").change(function(){
 			that.goSpecificWeekDay();
 		});
 
 		return this;
+    },
+    
+	renderChildren: function(){
+
+       $('#timerContainer', this.el).append(this.timecardListView.render().el);
+
+    	return this;
     },
 
     remove : function() {
@@ -57,43 +64,38 @@ itbmobile.TimerView = Backbone.View.extend({
     }
 });
 
-itbmobile.TimecardCollectionView = Backbone.View.extend({
-    el:$('#tcContainer'),
+itbmobile.TimecardListView = Backbone.View.extend({
     initialize:function() {
-    	this.$container = $('#tcContainer');
-    	this.model.on('reset', this.remove, this);
+    	//this.model.on('reset', this.remove, this);
     	this.model.on('add', this.addTimecard, this);
+    	this.model.loadCards();
+    },
+    
+    render:function () {
+    	console.log("TimecardListView  render");
+       this.$el.html(this.template(this.model.attributes));
+       	
+       return this;
     },
     
     remove:function() {
         this.$el.remove();
-    },
+	},
 
-    addTimecard:function (tc) {
+	addTimecard:function (tcItemData) {
     	console.log("on add Timecard");
-		tc.calculateWeekTotal();
-		var tcView = new itbmobile.TimecardView({
-			model: tc
+
+		tcItemData.calculateWeekTotal();
+		var timecardItemView = new itbmobile.TimecardItemView({
+			model: tcItemData
 		});
-
-		tcView.render();
-		$('#tcContainer').append(tcView.el);
-    },
-
-    addTimeentry:function (te) {
-        var teView = new itbmobile.timeentryView({model:te});
-        this.$('#tcContainer').append(tcView.el);
-    },
-
-    addAllTimeentry: function() {
-        itbmobile.timeentryCollection.each(this.addTimeentry, this);
+    	
+       $('#timeCardListViewContent', this.el).append(timecardItemView.render().el);
     }
 });
 
-itbmobile.TimecardView = Backbone.View.extend({ 
-    tagName :  "div",
-    className : "row-fluid",
-    template: _.template($('#tcitem-template').html()),
+itbmobile.TimecardItemView = Backbone.View.extend({ 
+
     events: {
       "click .toggle"   : "toggleDone"
     },
@@ -104,12 +106,14 @@ itbmobile.TimecardView = Backbone.View.extend({
     },
 
     render: function() {
-      this.model.calculateWeekTotal();
-      this.$el.html(this.template(this.model.attributes));
-      this.addEngagementPickList();
-      //this.model.calculateWeekTotal();
-      this.addTimeentryCollectionView();
-      return this;
+		console.log('TimecardItemView render');
+		this.model.calculateWeekTotal();
+		this.$el.html(this.template(this.model.attributes));
+		
+		this.addEngagementPickList();
+		this.addTimeentrListView();
+		
+		return this;
     },
 
     remove: function() {
@@ -117,135 +121,78 @@ itbmobile.TimecardView = Backbone.View.extend({
     },
     
     addEngagementPickList:function(){
-	    var engagementCollectionView = new itbmobile.EngagementCollectionView({
-	    	collection:itbmobile.engagementCollection});
-	    $(this.el).find('.engagementEdit').html(engagementCollectionView.render().el);
+    	//TODO
+		/*var engagementListViewData = new itbmobile.EngagementListViewData();
+		engagementListViewData.loadData();
+		var engagementListView = new itbmobile.EngagementListView({
+			model:engagementListViewData});
+
+       $('#engagementEdit', this.el).html(engagementListView.render().el);*/
     },
     
-    addTimeentryCollectionView: function (){
-		var timeentrycollectionview = new itbmobile.timeentryCollectionView({collection:this.model.get('teList')});
-		$(this.el).append(timeentrycollectionview.render().el);
+    addTimeentrListView: function (){
+		var timeEntryListView = new itbmobile.TimeEntryListView({model:this.model.get('timeEntryListData')});
+		$('#timeCardItemViewContent', this.el).html(timeEntryListView.render().el);
     }
 });
 
-itbmobile.timeentryCollectionView = Backbone.View.extend({
-    tagName : "div",
+itbmobile.TimeEntryListView = Backbone.View.extend({
     initialize:function() {
-    	this.listenTo(this.collection,'add',this.addTimeentry);
+    	//this.listenTo(this.model,'add',this.addTimeentry);
     },
     render : function(){
-	    this.addAllTimeentry();
-	    return this;
+		console.log('TimeEntryListView render');
+		this.$el.html(this.template(this.model.attributes));
+		this.addAllTimeentry();
+		return this;
     },
     remove:function() {
         this.$el.remove();
     },
     addTimeentry:function (te) {
-        var teView = new itbmobile.timeentryView({model:te});
-        $(this.el).append(teView.render().el);
+        var teView = new itbmobile.TimeEntryItemView({model:te});
+        $("#timeEntryListViewContent", this.el).append(teView.render().el);
     },
     addAllTimeentry: function() {
-        this.collection.each(this.addTimeentry, this);
+        this.model.each(this.addTimeentry, this);
     }
 });
 
-itbmobile.timeentryView = Backbone.View.extend({
-    tagName:  "div",
-    className: "row-fluid",
-    template: _.template($('#teitem-template').html()),
-    // The DOM events specific to an item.
-    events: {
-    },
+itbmobile.TimeEntryItemView = Backbone.View.extend({
+
     initialize: function() {
       this.listenTo(this.model, 'change', this.render);
       this.listenTo(this.model, 'destroy', this.remove);
     },
-    // Re-render the titles of the todo item.
+
     render: function() {
-      this.$el.html(this.template(this.model.toJSON()));
-      if(this.model.get('Date__c')){ //judge whether it is selected day
-	      this.$el.removeClass('hideEntry');
-      }else{
-	      this.$el.addClass('hideEntry');
-      }
-      return this;
+		console.log('TimeEntryItemView render');
+		this.$el.html(this.template(this.model.attributes));
+		if(this.model.get('Date__c')){ //judge whether it is selected day
+			this.$el.removeClass('hideEntry');
+		}else{
+			this.$el.addClass('hideEntry');
+		}
+		return this;
     },
     
-    // Remove the item, destroy the model.
     clear: function() {
       this.model.destroy();
     }
 });
 
-itbmobile.EngagementCollectionView = Backbone.View.extend({ 
-    tagName :  "div",
-    template: _.template($('#tcEng-template').html()),
-    events:{
-	    'change .engagementPicklist':'findRolePicklist'
-    },
+itbmobile.EngagementListView = Backbone.View.extend({ 
     initialize: function() {
-      this.listenTo(this.collection, 'change', this.render);
-      this.listenTo(this.collection, 'destroy', this.remove);
-      //this.resourceAssignmentsview = new itbmobile.raCollectionView({collection:this.model.get('raList')});
+      //this.listenTo(this.model, 'change', this.render);
+      //this.listenTo(this.model, 'destroy', this.remove);
     },
-    // Re-render the titles of the todo item.
+
     render: function() {
-      this.$el.html(this.template(this.collection));
+      this.$el.html(this.template(this.model.attributes));
       return this;
     },
-    // Remove the item, destroy the model.
-    remove: function() {
-      this.model.destroy();
-    },
-    findRolePicklist:function(evt){
-	    var engId = $(evt.target).val();
-	    if(engId){
-		    var engagement = itbmobile.engagementCollection.get(engId);
-		    if(engagement){
-			    var racollection = engagement.get('raCollection');
-			    var racollectionview = new itbmobile.RaCollectionView({collection:racollection});
-		    }
-	    }
-    }
-});
 
-itbmobile.RaCollectionView = Backbone.View.extend({
-    tagName : "div",
-    initialize:function() {
-    	//this.listenTo(this.collection,'add',this.addRA);
-    },
-    render : function(){
-	    this.addAllRA();
-	    return this;
-    },
-    remove:function() {
-        this.$el.remove();
-    },
-    addRA:function (ra) {
-        var raView = new itbmobile.resourceAssignmentView({model:ra});
-        $(this.el).append(raView.render().el);
-    },
-    addAllRA: function() {
-        this.collection.each(this.addRA, this);
-    }
-});
-
-itbmobile.ResourceAssignmentView = Backbone.View.extend({/*
-    tagName:  "div",*/
-    template: _.template($('#teRa-template').html()),
-    
-    events: {
-    },
-    initialize: function() {
-      this.listenTo(this.model, 'change', this.render);
-      this.listenTo(this.model, 'destroy', this.remove);
-    },
-    render: function() {
-      this.$el.html(this.template(this.model.toJSON()));
-      return this;
-    },
-    
-    remove: function() {
+	remove: function() {
       this.model.destroy();
     }
 });

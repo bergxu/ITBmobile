@@ -1,0 +1,7 @@
+<select id="engagementListView">
+    <option>-None-</option>
+    <option>-Internal-</option>
+    <% _.each(models,function(engagement){ %>
+        <option><%= engagement.get('Name') %></option>
+    <% });%>
+</select>

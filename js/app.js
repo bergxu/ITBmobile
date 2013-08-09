@@ -104,16 +104,15 @@ itbmobile.Router = Backbone.Router.extend({
         this.$pageHeader.html(itbmobile.timerHeaderView.el);
 
         if (!itbmobile.timerView) {
-            itbmobile.timedata = new itbmobile.TimerData();
-            itbmobile.timerView = new itbmobile.TimerView({model:itbmobile.timedata});
+            itbmobile.timerViewData = new itbmobile.TimerViewData();
+            itbmobile.timerView = new itbmobile.TimerView({model:itbmobile.timerViewData});
             itbmobile.timerView.render();
         } else {
             console.log('reusing timer view');
             itbmobile.timerView.delegateEvents(); // delegate events when the view is recycled
 		}   
         this.$content.html(itbmobile.timerView.el);
-        //$('#week_Date').mobipick();                                                                                                                                             
-        //$('#week_Day').selectmenu();
+
 		 $("#week_Day").change(function(){
 			 itbmobile.timerView.goSpecificWeekDay();
 		 });
@@ -193,7 +192,7 @@ function sessionCallback(oauthResponse) {
 }
 
 $(document).on("ready", function () {
-    itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView","ChatterHeaderView","ChatterCommentView"], function () {
+    itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView","ChatterHeaderView","ChatterCommentView","EngagementListView", "TimecardItemView", "TimecardListView", "TimeEntryItemView", "TimeEntryListView"], function () {
      
         itbmobile.router = new itbmobile.Router();
         Backbone.history.start();

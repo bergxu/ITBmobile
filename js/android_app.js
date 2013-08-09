@@ -103,17 +103,19 @@ itbmobile.Router = Backbone.Router.extend({
          }
         this.$pageHeader.html(itbmobile.timerHeaderView.el);
 
-        if (!itbmobile.timerdataview) {
-            itbmobile.timedata = new itbmobile.TimerData();
-            itbmobile.timerdataview = new itbmobile.TimerView({model:itbmobile.timedata});
-            itbmobile.timerdataview.render();
+        if (!itbmobile.timerView) {
+            itbmobile.timerViewData = new itbmobile.TimerViewData();
+            itbmobile.timerView = new itbmobile.TimerView({model:itbmobile.timerViewData});
+            itbmobile.timerView.render();
         } else {
             console.log('reusing timer view');
-            itbmobile.timerdataview.delegateEvents(); // delegate events when the view is recycled
+            itbmobile.timerView.delegateEvents(); // delegate events when the view is recycled
 		}   
-        this.$content.html(itbmobile.timerdataview.el);
-        //$('#week_Date').mobipick();                                                                                                                                             
-        //$('#week_Day').selectmenu();
+        this.$content.html(itbmobile.timerView.el);
+
+		 $("#week_Day").change(function(){
+			 itbmobile.timerView.goSpecificWeekDay();
+		 });
     },
 
     setup: function () {
@@ -185,7 +187,7 @@ $(document).on("ready", function () {
                 if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
                     itbmobile.currentResource.fetchByOwner({data: {ownerId: itbmobile.currentUser.get("id")}, success: function() {
                     itbmobile.currentUser.set({resourceId: itbmobile.currentResource.get("Id")});
-                    itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView"], function () {
+					  itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView","ChatterHeaderView","ChatterCommentView","EngagementListView", "TimecardItemView", "TimecardListView", "TimeEntryItemView", "TimeEntryListView"], function () {
                                                  itbmobile.router = new itbmobile.Router();
                                                   Backbone.history.start();
                                                   });
