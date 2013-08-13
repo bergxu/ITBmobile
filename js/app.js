@@ -37,58 +37,38 @@ itbmobile.Router = Backbone.Router.extend({
         itbmobile.shellView = new itbmobile.ShellView();
         $('body').html(itbmobile.shellView.render().el);
         this.$content = $("#content");
-        this.$pageHeader = $("#pageheader");
     },
 
     home: function () {
-        if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
+        //if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
             // user's already logged in
             console.log("user's logged in");
             if (!itbmobile.homeView) {
                 itbmobile.homeView = new itbmobile.HomeView({ model: itbmobile.currentUser });
                 itbmobile.homeView.render();
+				this.$content.html(itbmobile.homeView.el);
             } else {
                 console.log('reusing home view');
-                itbmobile.homeView.delegateEvents(); // delegate events when the view is recycled
+				this.$content.html(itbmobile.homeView.el);
+                itbmobile.homeView.delegateEvents();
             }
-            this.$content.html(itbmobile.homeView.el);
-        } else {
+        /*
+} else {
             // user hasn't logged in yet
             console.log("user's not logged in");
         }
-        if (!itbmobile.homeHeaderView) {
-
-        } else {
-            console.log('reusing home header view');
-            //itbmobile.homeHeaderView.delegateEvents(); // delegate events when the view is recycled
-        }
-        itbmobile.homeHeaderView = new itbmobile.HomeHeaderView();
-        itbmobile.homeHeaderView.render();
-        this.$pageHeader.html(itbmobile.homeHeaderView.el);
+*/
     },
 
     chatter: function () {
-
-
-
-
-        if (!itbmobile.chatterHeaderView) {
-            itbmobile.chatterHeaderView = new itbmobile.ChatterHeaderView();
-            itbmobile.chatterHeaderView.render();
-
-        } else {
-            itbmobile.chatterHeaderView.delegateEvents(); // delegate events when the view is recycled
-        }
-        this.$pageHeader.html(itbmobile.chatterHeaderView.el);
-
         if (!itbmobile.chatterView) {
-          
-            var chatter = new itbmobile.chatterData();
-            chatterOperate.getAllGroups();
-        } else {
-            console.log('reusing home view');
-            itbmobile.chatterView.delegateEvents(); // delegate events when the view is recycled
+            itbmobile.chatterView = new itbmobile.ChatterView();
+            itbmobile.chatterView.render();
             this.$content.html(itbmobile.chatterView.el);
+        } else {
+            console.log('reusing chatter view');
+            this.$content.html(itbmobile.chatterView.el);
+            itbmobile.chatterView.delegateEvents();
         }
     
 
@@ -98,38 +78,24 @@ itbmobile.Router = Backbone.Router.extend({
         if (!itbmobile.timerView) {
             itbmobile.timerView = new itbmobile.TimerView();
             itbmobile.timerView.render();
+			this.$content.html(itbmobile.timerView.el);
         } else {
-            console.log('reusing home view');
-            itbmobile.timerView.delegateEvents(); // delegate events when the view is recycled
+            console.log('reusing timer view');
+			this.$content.html(itbmobile.timerView.el);
+            itbmobile.timerView.delegateEvents();
         }
-        this.$content.html(itbmobile.timerView.el);
-
-        if (!itbmobile.timerHeaderView) {
-            itbmobile.timerHeaderView = new itbmobile.TimerHeaderView();
-            itbmobile.timerHeaderView.render();
-        } else {
-            itbmobile.timerHeaderView.delegateEvents(); // delegate events when the view is recycled
-        }
-        this.$pageHeader.html(itbmobile.timerHeaderView.el);
     },
 
     setup: function () {
         if (!itbmobile.setupView) {
             itbmobile.setupView = new itbmobile.SetupView();
             itbmobile.setupView.render();
+            this.$content.html(itbmobile.setupView.el);
         } else {
-            console.log('reusing home view');
+            console.log('reusing setup view');
+            this.$content.html(itbmobile.setupView.el);
             itbmobile.setupView.delegateEvents(); // delegate events when the view is recycled
         }
-        this.$content.html(itbmobile.setupView.el);
-
-        if (!itbmobile.setupHeaderView) {
-            itbmobile.setupHeaderView = new itbmobile.SetupHeaderView();
-            itbmobile.setupHeaderView.render();
-        } else {
-            itbmobile.setupHeaderView.delegateEvents(); // delegate events when the view is recycled
-        }
-        this.$pageHeader.html(itbmobile.setupHeaderView.el);
     }
 
 });
@@ -186,7 +152,7 @@ $(document).on("ready", function () {
         itbmobile.router = new itbmobile.Router();
         Backbone.history.start();
 
-        $(".icon-home").popupWindow({
+        $("#loginsfdc").popupWindow({
             windowURL: getAuthorizeUrl(loginUrl, clientId, redirectUri),
             windowName: 'Connect',
             centerBrowser: 1,
