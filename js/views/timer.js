@@ -1,24 +1,33 @@
 itbmobile.TimerHeaderView = Backbone.View.extend({
 
-    render:function () {
-        this.$el.html('<ul class="nav"><li><a href="#"><i class="icon-time icon-2x"></i></a></li></ul>');
-        return this;
-    }
+	events: {
+		"click #newCard": "showDialog",
+	},
+	
+	showDialog: function(){
+		$('#myModal').modal('toggle');
+	},
+
+	render: function () {
+		this.$el.html(this.template());
+		return this;
+	}
 });
 
 itbmobile.TimerView = Backbone.View.extend({
 
     events:{
-        "click #goLastWeek":"goLastWeek",
-        "click #goNextWeek":"goNextWeek"
+		"click #goLastWeek":"goLastWeek",
+		"click #goNextWeek":"goNextWeek",
+		"click #comfirmCreate": "createTimecard"
     },
 
 	initialize:function() {
-		this.timecardListViewData = new itbmobile.TimeCardListViewData();
+		this.timecardListViewData = this.model.getTimecardListViewData();
 		this.timecardListView = new itbmobile.TimecardListView({model:this.timecardListViewData});
 
-		//this.model.on('change:rangeDateEnd', this.render, this);
-    	//this.model.on('change:selectedDate', this.render, this);
+		this.model.on('change:rangeDateEnd', this.render, this);
+    	this.model.on('change:selectedDate', this.renderChildren, this);
 		//this.model.on('reset', this.remove, this);
 	},
 
@@ -40,13 +49,18 @@ itbmobile.TimerView = Backbone.View.extend({
     
 	renderChildren: function(){
 
-       $('#timerContainer', this.el).append(this.timecardListView.render().el);
+       $('#timerContainer', this.el).html(this.timecardListView.render().el);
 
     	return this;
     },
 
     remove : function() {
 		this.$el.remove();
+	},
+	
+	createTimecard: function(){
+    	var checkValue=$("#engagement").val();
+    	this.model.createTimecard(checkValue);
 	},
 
 	goLastWeek : function() {
@@ -68,11 +82,11 @@ itbmobile.TimecardListView = Backbone.View.extend({
     initialize:function() {
     	//this.model.on('reset', this.remove, this);
     	this.model.on('add', this.addTimecard, this);
-    	this.model.loadCards();
     },
     
     render:function () {
     	console.log("TimecardListView  render");
+    	this.model.loadCards();
        this.$el.html(this.template(this.model.attributes));
        	
        return this;

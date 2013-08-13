@@ -2,6 +2,12 @@ itbmobile.TimerViewData = Backbone.Model.extend({
     initialize:function () {
     	var today = new Date();
     	this.setDateData(today);
+
+		this.timecardListViewData = new itbmobile.TimeCardListViewData();
+	},
+	
+	getTimecardListViewData: function(){
+		return this.timecardListViewData;
 	},
 	
 	dateToString:function(d,t){
@@ -19,6 +25,11 @@ itbmobile.TimerViewData = Backbone.Model.extend({
 	    result = d.getFullYear()+'-'+dm+'-'+dd;
 	    return result;
     },
+	createTimecard: function(engagement){
+		this.timecardListViewData.createNewTimeCard(engagement,
+								this.rangeDateBegin, 
+								this.rangeDateEnd);
+	},
     goPrev:function(){
     	console.log("TimeDate goPrev");
 	    var cd = this.get('currentDay');
@@ -64,14 +75,20 @@ itbmobile.TimerViewData = Backbone.Model.extend({
        this.set('weekDay','All');
         
     	var todayDate = today.getDate();
-    	var rangeDateBegin = new Date(today);
-    	rangeDateBegin.setDate(todayDate - todayDay);
-    	var rangeDateEnd = new Date(today);
-    	rangeDateEnd.setDate(todayDate + 6 - todayDay);
+    	//var rangeDateBegin = new Date(today);
+    	//rangeDateBegin.setDate(todayDate - todayDay);
+    	this.rangeDateBegin = new Date(today);
+    	this.rangeDateBegin.setDate(todayDate - todayDay);
+    	//var rangeDateEnd = new Date(today);
+    	//rangeDateEnd.setDate(todayDate + 6 - todayDay);
+    	this.rangeDateEnd = new Date(today);
+    	this.rangeDateEnd.setDate(todayDate + 6 - todayDay);
 
     	this.set('currentDay',today);
-    	this.set('rangeDateBegin',this.dateToString(rangeDateBegin,2));
-    	this.set('rangeDateEnd',this.dateToString(rangeDateEnd,2));
+    	//this.set('rangeDateBegin',this.dateToString(rangeDateBegin,2));
+    	//this.set('rangeDateEnd',this.dateToString(rangeDateEnd,2));
+    	this.set('rangeDateBegin',this.dateToString(this.rangeDateBegin,2));
+    	this.set('rangeDateEnd',this.dateToString(this.rangeDateEnd,2));
     	this.set('selectedDate', ' ');
     }
 });
@@ -155,6 +172,47 @@ itbmobile.TimeCardListViewData = Backbone.Collection.extend({
 		},function(response){
             console.log(response);
         });
+	},
+	
+	createNewTimeCard: function(engagement, dateBegin, dateEnd){
+		console.log("create new timecard engagement = " + engagement);
+		//TODO new a timecard
+		
+		client.create("Timecard__c",
+			{	Engagement__c: 'a07M0000002L7P0',
+				Resource_Assignment__c: 'a0AM00000033l4h',
+				Start_Date__c: '2013-08-11', 
+				End_Date__c: '2013-08-17'},
+				//Start_Date__c:dateBegin, 
+				//End_Date__c: dateEnd},
+			function(response){
+				//call back success
+				console.log("call back success");
+				if(response.totalSize > 0){
+					console.log('response size = ' + response.totalSize);
+					var timecard, timecardData, timeEntry, timeEntryData;
+					for (var i = 0, j = response.totalSize; i < j; i++) {
+						timecardData = response.records[i];
+						var timeentrys = new itbmobile.TimeEntryListViewData();
+						if (timecardData.Time_Entries__r.totalSize > 0) {
+							timeEntryData = timecardData.Time_Entries__r.records;
+							for (var k = 0, t = timeEntryData.length; k < t; k++) {
+								timeEntry = new itbmobile.TimeEntryItemViewData(timeEntryData[k]);
+								timeentrys.add(timeEntry);
+							}
+						}
+	
+						timecard = new itbmobile.TimeCardItemViewData(timecardData);
+						timecard.set('timeEntryListData', timeentrys);
+	
+						self.add(timecard);
+		            }
+		        }
+			},function(response){
+				//call back error
+				console.log(response);
+				console.log("call back error");
+	        });
 	}
 
 });
