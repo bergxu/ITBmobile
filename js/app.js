@@ -75,6 +75,7 @@ itbmobile.Router = Backbone.Router.extend({
     },
 
     timer: function () {
+<<<<<<< HEAD
         if (!itbmobile.timerView) {
             itbmobile.timerView = new itbmobile.TimerView();
             itbmobile.timerView.render();
@@ -84,6 +85,29 @@ itbmobile.Router = Backbone.Router.extend({
 			this.$content.html(itbmobile.timerView.el);
             itbmobile.timerView.delegateEvents();
         }
+=======
+        if (!itbmobile.timerHeaderView) {
+            itbmobile.timerHeaderView = new itbmobile.TimerHeaderView();
+            itbmobile.timerHeaderView.render();
+        } else {
+            itbmobile.timerHeaderView.delegateEvents(); // delegate events when the view is recycled
+         }
+        this.$pageHeader.html(itbmobile.timerHeaderView.el);
+
+        if (!itbmobile.timerView) {
+            itbmobile.timerViewData = new itbmobile.TimerViewData();
+            itbmobile.timerView = new itbmobile.TimerView({model:itbmobile.timerViewData});
+            itbmobile.timerView.render();
+        } else {
+            console.log('reusing timer view');
+            itbmobile.timerView.delegateEvents(); // delegate events when the view is recycled
+		}   
+        this.$content.html(itbmobile.timerView.el);
+
+		 $("#week_Day").change(function(){
+			 itbmobile.timerView.goSpecificWeekDay();
+		 });
+>>>>>>> timer-refactor
     },
 
     setup: function () {
@@ -112,6 +136,7 @@ var loginUrl    = 'https://test.salesforce.com/';
 var clientId    = '3MVG9Gmy2zmPB01qZQFJGoQ27ehyJINwpFO.n6ff0bwbCXNe_vzwY_oyCGhsyigLmjtY6tG6GAP4XGIj3vWsI';
 var redirectUri = 'http://localhost:8888/force/oauthcallback.html';
 var proxyUrl    = 'http://localhost:8888/force/proxy.php?mode=native';
+var uId = '';
 
 var client = new forcetk.Client(clientId, loginUrl, proxyUrl);
 
@@ -128,7 +153,12 @@ function sessionCallback(oauthResponse) {
     } else {
         client.setSessionToken(oauthResponse.access_token, null,
             oauthResponse.instance_url);
-            
+        uId = oauthResponse.id;
+        if(uId){
+            uId = /id\/\w+?\/(\w+)$/.exec(uId);
+            if(uId && uId[1])
+            uId = uId[1];
+		 }
         itbmobile.currentUser = new itbmobile.User();
         itbmobile.currentResource = new itbmobile.Resource();
         itbmobile.currentUser.fetch({
@@ -147,7 +177,7 @@ function sessionCallback(oauthResponse) {
 }
 
 $(document).on("ready", function () {
-    itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView","ChatterHeaderView","ChatterCommentView"], function () {
+    itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView","ChatterHeaderView","ChatterCommentView","EngagementListView", "TimerHeaderView", "TimecardItemView", "TimecardListView", "TimeEntryItemView", "TimeEntryListView"], function () {
      
         itbmobile.router = new itbmobile.Router();
         Backbone.history.start();

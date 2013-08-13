@@ -1,0 +1,49 @@
+<!--datepicker-->
+<div>
+	<i class="icon-backward icon-2x" id="goLastWeek"></i>
+	<label for="weekDate">Week Ending</label>
+	<input type="date" name="weekDate" id="week_Date" value="<%= rangeDateEnd %>"/>
+	<i class="icon-forward icon-2x" id="goNextWeek"></i>
+</div>
+
+<!--day picklist-->
+<div>
+	<label for="week_Day">Week Day</label>
+	<select class="test" id="week_Day">
+	    <option value="All">All Week Day</option>
+	    <option value="Sun">Sunday</option>
+	    <option value="Mon">Monday</option>
+	    <option value="Tue">Tuesday</option>
+	    <option value="Wed">Wednesday</option>
+	    <option value="Thu">Thursday</option>
+	    <option value="Fri">Friday</option>
+	    <option value="Sat">Saturday</option>
+	</select>
+</div>
+
+<!--content-->
+<div class="container" id="timerContainer">
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">Pick Engagement</h4>
+    </div>
+    <div class="modal-body">
+        <label for="engagement">Pick Engagement</label>
+        <select id="engagement">
+            <option value="none">-None-</option>
+            <option value="internal">-Internal-</option>
+        </select>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Cancle</button>
+      <button type="button" id="comfirmCreate" class="btn btn-primary" data-dismiss="modal">Create</button>
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

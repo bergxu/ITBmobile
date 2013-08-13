@@ -95,22 +95,27 @@ itbmobile.Router = Backbone.Router.extend({
     },
 
     timer: function () {
-        if (!itbmobile.timerView) {
-            itbmobile.timerView = new itbmobile.TimerView();
-            itbmobile.timerView.render();
-        } else {
-            console.log('reusing home view');
-            itbmobile.timerView.delegateEvents(); // delegate events when the view is recycled
-        }
-        this.$content.html(itbmobile.timerView.el);
-
         if (!itbmobile.timerHeaderView) {
             itbmobile.timerHeaderView = new itbmobile.TimerHeaderView();
             itbmobile.timerHeaderView.render();
         } else {
             itbmobile.timerHeaderView.delegateEvents(); // delegate events when the view is recycled
-        }
+         }
         this.$pageHeader.html(itbmobile.timerHeaderView.el);
+
+        if (!itbmobile.timerView) {
+            itbmobile.timerViewData = new itbmobile.TimerViewData();
+            itbmobile.timerView = new itbmobile.TimerView({model:itbmobile.timerViewData});
+            itbmobile.timerView.render();
+        } else {
+            console.log('reusing timer view');
+            itbmobile.timerView.delegateEvents(); // delegate events when the view is recycled
+		}   
+        this.$content.html(itbmobile.timerView.el);
+
+		 $("#week_Day").change(function(){
+			 itbmobile.timerView.goSpecificWeekDay();
+		 });
     },
 
     setup: function () {
@@ -141,9 +146,10 @@ $(document).on("ready", function () {
 
     // The version of the REST API you wish to use in your app.
     var apiVersion = "v28.0";
-    var client ;
     var debugMode = true;
     var logToConsole = cordova.require("salesforce/util/logger").logToConsole;
+    var client ;
+	 var uId = '';
 
     function onDeviceReady() {
         logToConsole("onDeviceReady: Cordova ready");
@@ -164,6 +170,12 @@ $(document).on("ready", function () {
         client = new forcetk.Client(credsData.clientId, credsData.loginUrl, null,
             cordova.require("salesforce/plugin/oauth").forcetkRefresh);
         client.setSessionToken(credsData.accessToken, apiVersion, credsData.instanceUrl);
+        uId = credsData.identityUrl;
+        if(uId){
+            uId = /id\/\w+?\/(\w+)$/.exec(uId);
+            if(uId && uId[1])
+            uId = uId[1];
+		 }
         //client.setRefreshToken(credsData.refreshToken);
         //client.setUserAgentString(credsData.userAgent);
 
@@ -175,7 +187,7 @@ $(document).on("ready", function () {
                 if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
                     itbmobile.currentResource.fetchByOwner({data: {ownerId: itbmobile.currentUser.get("id")}, success: function() {
                     itbmobile.currentUser.set({resourceId: itbmobile.currentResource.get("Id")});
-                    itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView"], function () {
+					  itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView","ChatterHeaderView","ChatterCommentView","EngagementListView", "TimecardItemView", "TimecardListView", "TimeEntryItemView", "TimeEntryListView"], function () {
                                                  itbmobile.router = new itbmobile.Router();
                                                   Backbone.history.start();
                                                   });
