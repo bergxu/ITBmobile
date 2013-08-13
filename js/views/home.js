@@ -29,6 +29,9 @@ itbmobile.HomeView = Backbone.View.extend({
         // init sub view for task collection
         this.tasks = new itbmobile.TaskCollection();
         this.tasksView = new itbmobile.HomeTaskListView({model: this.tasks});
+        
+        // load data
+        this.loadData();
     },
 
     render: function() {
