@@ -3,7 +3,7 @@
     "oauthRedirectURI": "http://localhost:8888/force/oauthcallback.html",
     "oauthScopes": ["api"],
     "isLocal": true,
-    "startPage": "android_index.html",
+    "startPage": "index_android.html",
     "errorPage": "error.html",
     "shouldAuthenticate": true,
     "attemptOfflineLoad": false

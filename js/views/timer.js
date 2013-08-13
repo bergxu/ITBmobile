@@ -1,7 +1,7 @@
 itbmobile.TimerHeaderView = Backbone.View.extend({
 
 	events: {
-		"click #newCard": "showDialog",
+		"click #newCard": "showDialog"
 	},
 	
 	showDialog: function(){
@@ -43,7 +43,6 @@ itbmobile.TimerView = Backbone.View.extend({
 		$("#week_Day").change(function(){
 			that.goSpecificWeekDay();
 		});
-
 		return this;
     },
     
@@ -64,12 +63,10 @@ itbmobile.TimerView = Backbone.View.extend({
 	},
 
 	goLastWeek : function() {
-		timerDateChanged = true;
 		this.model.goPrev();
 	},
 
 	goNextWeek : function() {
-		timerDateChanged = true;
 		this.model.goNext();
 	},
 

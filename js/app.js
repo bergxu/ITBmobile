@@ -40,28 +40,26 @@ itbmobile.Router = Backbone.Router.extend({
     },
 
     home: function () {
-        //if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
+        if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
             // user's already logged in
             console.log("user's logged in");
             if (!itbmobile.homeView) {
                 itbmobile.homeView = new itbmobile.HomeView({ model: itbmobile.currentUser });
                 itbmobile.homeView.render();
-				this.$content.html(itbmobile.homeView.el);
+				  this.$content.html(itbmobile.homeView.el);
             } else {
                 console.log('reusing home view');
-				this.$content.html(itbmobile.homeView.el);
+				  this.$content.html(itbmobile.homeView.el);
                 itbmobile.homeView.delegateEvents();
             }
-        /*
-} else {
+		} else {
             // user hasn't logged in yet
             console.log("user's not logged in");
         }
-*/
     },
 
     chatter: function () {
-        if (!itbmobile.chatterView) {
+        /*if (!itbmobile.chatterView) {
             itbmobile.chatterView = new itbmobile.ChatterView();
             itbmobile.chatterView.render();
             this.$content.html(itbmobile.chatterView.el);
@@ -69,37 +67,18 @@ itbmobile.Router = Backbone.Router.extend({
             console.log('reusing chatter view');
             this.$content.html(itbmobile.chatterView.el);
             itbmobile.chatterView.delegateEvents();
-        }
-    
-
+        }*/
     },
 
     timer: function () {
-<<<<<<< HEAD
-        if (!itbmobile.timerView) {
-            itbmobile.timerView = new itbmobile.TimerView();
-            itbmobile.timerView.render();
-			this.$content.html(itbmobile.timerView.el);
-        } else {
-            console.log('reusing timer view');
-			this.$content.html(itbmobile.timerView.el);
-            itbmobile.timerView.delegateEvents();
-        }
-=======
-        if (!itbmobile.timerHeaderView) {
-            itbmobile.timerHeaderView = new itbmobile.TimerHeaderView();
-            itbmobile.timerHeaderView.render();
-        } else {
-            itbmobile.timerHeaderView.delegateEvents(); // delegate events when the view is recycled
-         }
-        this.$pageHeader.html(itbmobile.timerHeaderView.el);
-
         if (!itbmobile.timerView) {
             itbmobile.timerViewData = new itbmobile.TimerViewData();
             itbmobile.timerView = new itbmobile.TimerView({model:itbmobile.timerViewData});
             itbmobile.timerView.render();
+            this.$content.html(itbmobile.timerView.el);
         } else {
             console.log('reusing timer view');
+            this.$content.html(itbmobile.timerView.el);
             itbmobile.timerView.delegateEvents(); // delegate events when the view is recycled
 		}   
         this.$content.html(itbmobile.timerView.el);
@@ -107,7 +86,6 @@ itbmobile.Router = Backbone.Router.extend({
 		 $("#week_Day").change(function(){
 			 itbmobile.timerView.goSpecificWeekDay();
 		 });
->>>>>>> timer-refactor
     },
 
     setup: function () {

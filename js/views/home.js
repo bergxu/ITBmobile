@@ -20,8 +20,7 @@ itbmobile.HomeView = Backbone.View.extend({
     
     initialize: function() {
         // on current user change
-        /*
-this.model.on("change", this.render, this);
+		 this.model.on("change", this.render, this);
         
         // init sub view for vacation plan
         this.vacationPlan = new itbmobile.VacationPlan();
@@ -33,17 +32,16 @@ this.model.on("change", this.render, this);
         
         // load data
         this.loadData();
-*/
     },
 
     render: function() {
         this.$el.html(this.template());
         
         // render vacation plan
-        //$('#myVacationSection', this.el).append(this.vacationView.render().el);
+        $('#myVacationSection', this.el).append(this.vacationView.render().el);
         
         // render task list
-        //$('#myTaskSection', this.el).append(this.tasksView.render().el);
+        $('#myTaskSection', this.el).append(this.tasksView.render().el);
         
         return this;
     },

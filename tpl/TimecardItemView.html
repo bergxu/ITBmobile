@@ -1,14 +1,14 @@
 <div id="timeCardItemView">
-    <div class="span3" id="engagementEdit">
+    <div class="col-lg-3" id="engagementEdit">
         <% if(Engagement__c){%>
             <span><%= Engagement__r.Name %></span>
         <%}else{%>
             <span><%= RecordType.DeveloperName %></span>
         <%}%>
     </div>
-    <div class="span3"><%= weekTotal %></div>
-    <div class="span3"><%= Status__c %></div>
-    <div class="span3"> for test ---</div>
+    <div class="col-lg-3"><%= weekTotal %></div>
+    <div class="col-lg-3"><%= Status__c %></div>
+    <div class="col-lg-3"> for test ---</div>
 
     <div id="timeCardItemViewContent">
     </div>
