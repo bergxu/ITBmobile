@@ -17,6 +17,7 @@ itbmobile.TimerHeaderView = Backbone.View.extend({
 itbmobile.TimerView = Backbone.View.extend({
 
     events:{
+		"click #newCard":"showDialog",
 		"click #goLastWeek":"goLastWeek",
 		"click #goNextWeek":"goNextWeek",
 		"click #comfirmCreate": "createTimecard"
@@ -57,6 +58,10 @@ itbmobile.TimerView = Backbone.View.extend({
 		this.$el.remove();
 	},
 	
+	showDialog: function(){
+		$('#myModal').modal('toggle');
+	},
+
 	createTimecard: function(){
     	var checkValue=$("#engagement").val();
     	this.model.createTimecard(checkValue);

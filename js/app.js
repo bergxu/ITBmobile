@@ -81,11 +81,22 @@ itbmobile.Router = Backbone.Router.extend({
             this.$content.html(itbmobile.timerView.el);
             itbmobile.timerView.delegateEvents(); // delegate events when the view is recycled
 		}   
-        this.$content.html(itbmobile.timerView.el);
 
-		 $("#week_Day").change(function(){
-			 itbmobile.timerView.goSpecificWeekDay();
-		 });
+		$("#week_Day").change(function(){
+			itbmobile.timerView.goSpecificWeekDay();
+		});
+
+		$("#goLastWeek").click(function(){
+			itbmobile.timerView.goLastWeek();
+		});
+
+		$("#goNextWeek").click(function(){
+			itbmobile.timerView.goNextWeek();
+		});
+
+		$("#newCard").click(function(){
+			itbmobile.timerView.showDialog();
+		});
     },
 
     setup: function () {

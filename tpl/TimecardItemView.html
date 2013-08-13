@@ -1,14 +1,15 @@
 <div id="timeCardItemView">
-    <div class="col-lg-3" id="engagementEdit">
+    <div class="col-lg-3 col-sm-3" id="engagementEdit">
         <% if(Engagement__c){%>
             <span><%= Engagement__r.Name %></span>
         <%}else{%>
             <span><%= RecordType.DeveloperName %></span>
         <%}%>
     </div>
-    <div class="col-lg-3"><%= weekTotal %></div>
-    <div class="col-lg-3"><%= Status__c %></div>
-    <div class="col-lg-3"> for test ---</div>
+    <div class="col-lg-3 col-sm-3"><%= weekTotal %></div>
+    <div class="col-lg-3 col-sm-3"><%= Status__c %></div>
+    <!--div class="col-lg-3 col-sm-3"> for test ---</div-->
+    <div class="col-lg-3 col-sm-3"><a data-toggle="modal" id="newCard" class="btn btn-primary btn-lg">create time Entry</a></div>
 
     <div id="timeCardItemViewContent">
     </div>
