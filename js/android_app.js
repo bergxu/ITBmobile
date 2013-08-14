@@ -81,11 +81,7 @@ itbmobile.Router = Backbone.Router.extend({
             this.$content.html(itbmobile.timerView.el);
             itbmobile.timerView.delegateEvents(); // delegate events when the view is recycled
 		}   
-        this.$content.html(itbmobile.timerView.el);
-
-		 $("#week_Day").change(function(){
-			 itbmobile.timerView.goSpecificWeekDay();
-		 });
+		//itbmobile.timerView.bindEvent();
     },
 
     setup: function () {

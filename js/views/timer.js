@@ -1,12 +1,12 @@
 itbmobile.TimerHeaderView = Backbone.View.extend({
 
-	events: {
-		"click #newCard": "showDialog"
+	/*events: {
+		"click #newTimeCard": "showDialog"
 	},
 	
 	showDialog: function(){
 		$('#myModal').modal('toggle');
-	},
+	},*/
 
 	render: function () {
 		this.$el.html(this.template());
@@ -17,19 +17,50 @@ itbmobile.TimerHeaderView = Backbone.View.extend({
 itbmobile.TimerView = Backbone.View.extend({
 
     events:{
-		"click #newCard":"showDialog",
 		"click #goLastWeek":"goLastWeek",
 		"click #goNextWeek":"goNextWeek",
-		"click #comfirmCreate": "createTimecard"
+		"click #newTimeCard":"showNewTCDialog",
+		"click #newTimeEntry":"showNewTEDialog",
+		"click #teModalComfirm": "createTimecard"
     },
 
 	initialize:function() {
 		this.timecardListViewData = this.model.getTimecardListViewData();
 		this.timecardListView = new itbmobile.TimecardListView({model:this.timecardListViewData});
 
+		// init engagementListView
+		var engagementListViewData = new itbmobile.EngagementListViewData();
+		engagementListViewData.loadData();
+		var engagementListView = new itbmobile.EngagementListView({
+			model:engagementListViewData});
+
 		this.model.on('change:rangeDateEnd', this.render, this);
     	this.model.on('change:selectedDate', this.renderChildren, this);
 		//this.model.on('reset', this.remove, this);
+	},
+	
+	//maybe we need invoke ???
+	bindEvent: function(){
+		var that = this;
+		$("#week_Day").change(function(){
+			that.goSpecificWeekDay();
+		});
+
+		$("#goLastWeek").click(function(){
+			that.goLastWeek();
+		});
+
+		$("#goNextWeek").click(function(){
+			that.goNextWeek();
+		});
+
+		$("#newTimeCard").click(function(){
+			that.showNewTCDialog();
+		});
+
+		$("#newTimeEntry").click(function(){
+			that.showNewTEDialog();
+		});
 	},
 
     render:function () {
@@ -58,8 +89,12 @@ itbmobile.TimerView = Backbone.View.extend({
 		this.$el.remove();
 	},
 	
-	showDialog: function(){
-		$('#myModal').modal('toggle');
+	showNewTCDialog: function(){
+		$('#timecardModal').modal('toggle');
+	},
+
+	showNewTEDialog: function(){
+		$('#timeentryModal').modal('toggle');
 	},
 
 	createTimecard: function(){

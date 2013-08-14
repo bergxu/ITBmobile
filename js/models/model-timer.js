@@ -153,6 +153,7 @@ itbmobile.TimeCardListViewData = Backbone.Collection.extend({
 				for (var i = 0, j = response.totalSize; i < j; i++) {
 					timecardData = response.records[i];
 					var timeentrys = new itbmobile.TimeEntryListViewData();
+					if (timecardData.Time_Entries__r != null)
 					if (timecardData.Time_Entries__r.totalSize > 0) {
 						timeEntryData = timecardData.Time_Entries__r.records;
 						for (var k = 0, t = timeEntryData.length; k < t; k++) {
@@ -194,6 +195,7 @@ itbmobile.TimeCardListViewData = Backbone.Collection.extend({
 					for (var i = 0, j = response.totalSize; i < j; i++) {
 						timecardData = response.records[i];
 						var timeentrys = new itbmobile.TimeEntryListViewData();
+						if (timecardData.Time_Entries__r != null)
 						if (timecardData.Time_Entries__r.totalSize > 0) {
 							timeEntryData = timecardData.Time_Entries__r.records;
 							for (var k = 0, t = timeEntryData.length; k < t; k++) {
@@ -228,6 +230,10 @@ itbmobile.TimeEntryListViewData = Backbone.Collection.extend({
     },
 
 	loadEntrys:function(options) {
+	},
+	
+	createNewTimeEntry:function(options) {
+		
 	}
 });
 
@@ -237,19 +243,23 @@ itbmobile.EngagementItemViewData = Backbone.Model.extend({
 });
 
 itbmobile.EngagementListViewData = Backbone.Collection.extend({
-	model:itbmobile.Engagement,
-    initialize:function () {
-        
+	model:itbmobile.EngagementItemViewData,
+	initialize:function () {
     },
-    loadData:function(){console.log('load eng');
+
+	loadData:function(){
+		console.log('load engagement data');
     	var self = this;
-    	client.query('select Resource_Assignment__c from Time_Entry__c '+ 
+    	var soql = 'select Resource_Assignment__c from Time_Entry__c '+ 
 			' where Timecard__r.Resource__r.OwnerId =\'' + uId + '\' and Timecard__r.Approval_Status__c = \'Rejected\''+
 			' and Resource_Assignment__c != null'+
 			' and Resource_Assignment__r.Active__c = false'+
 			' and Date__c >= '+itbmobile.timerViewData.get('rangeDateBegin')+
-			' and Date__c <= '+itbmobile.timerViewData.get('rangeDateEnd'),
+			' and Date__c <= '+itbmobile.timerViewData.get('rangeDateEnd');
+
+    	client.query(soql,
 			function(res){
+				console.log('first soql');
 				console.log(res);
 				var raIds = [];
 				if(res.totalSize > 0){
@@ -279,6 +289,7 @@ itbmobile.EngagementListViewData = Backbone.Collection.extend({
 					' AND (Active__c = true OR Id in ('+raIds+'))'+
 		            ' order by Engagement__r.Name, Name', 
 				    function(response){
+						console.log('second soql');
 				    	console.log(response);
 				    	var engagement_Map = {};
 				    	if(response.totalSize > 0){
@@ -291,13 +302,13 @@ itbmobile.EngagementListViewData = Backbone.Collection.extend({
 								    	raList : []
 							    	};
 						    	}
-						    	//delete response.records[k]['Engagement__r'];
-							    engagement_Map[engagementId]['raList'].push(response.records[k]);
+
+								engagement_Map[engagementId]['raList'].push(response.records[k]);
 					    	}
 				    	}
 				    	var engagement,resourceassignment,ra_List,racollection;
 				    	for(var key in engagement_Map){
-					    	engagement = new itbmobile.Engagement(engagement_Map[key]['engagementObj']);
+					    	engagement = new itbmobile.EngagementItemViewData(engagement_Map[key]['engagementObj']);
 					    	ra_List = engagement_Map[key]['raList'];
 					    	racollection = new itbmobile.RaCollection();
 					    	for(var k=0;k<ra_List.length;k++){
@@ -321,4 +332,16 @@ itbmobile.EngagementListViewData = Backbone.Collection.extend({
 		);
     }
 
+});
+
+itbmobile.ResourceAssignment = Backbone.Model.extend({
+    initialize:function () {
+        
+    }
+});
+
+itbmobile.RaCollection = Backbone.Collection.extend({
+	model: itbmobile.ResourceAssignment,
+    initialize:function(){
+    }
 });
