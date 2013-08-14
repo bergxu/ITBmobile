@@ -16,13 +16,12 @@ itbmobile.TimerHeaderView = Backbone.View.extend({
 
 itbmobile.TimerView = Backbone.View.extend({
 
-    events:{
+	events:{
 		"click #goLastWeek":"goLastWeek",
 		"click #goNextWeek":"goNextWeek",
 		"click #newTimeCard":"showNewTCDialog",
-		"click #newTimeEntry":"showNewTEDialog",
-		"click #teModalComfirm": "createTimecard"
-    },
+		"click #tcModalComfirm": "createTimecard"
+	},
 
 	initialize:function() {
 		this.timecardListViewData = this.model.getTimecardListViewData();
@@ -63,20 +62,20 @@ itbmobile.TimerView = Backbone.View.extend({
 		});
 	},
 
-    render:function () {
-    	console.log("timer view rander");
-
-       this.$el.html(this.template(this.model.attributes));
-
+	render:function () {
+		console.log("timer view rander");
+	
+	   this.$el.html(this.template(this.model.attributes));
+	
 		this.renderChildren();
-
+	
 		var that = this;
-    	$("#week_Day").val(this.model.get('weekDay'));
+		$("#week_Day").val(this.model.get('weekDay'));
 		$("#week_Day").change(function(){
 			that.goSpecificWeekDay();
 		});
 		return this;
-    },
+	},
     
 	renderChildren: function(){
 
@@ -85,7 +84,7 @@ itbmobile.TimerView = Backbone.View.extend({
     	return this;
     },
 
-    remove : function() {
+	remove : function() {
 		this.$el.remove();
 	},
 	
@@ -93,11 +92,8 @@ itbmobile.TimerView = Backbone.View.extend({
 		$('#timecardModal').modal('toggle');
 	},
 
-	showNewTEDialog: function(){
-		$('#timeentryModal').modal('toggle');
-	},
-
 	createTimecard: function(){
+    	console.log("timeview create Time card");
     	var checkValue=$("#engagement").val();
     	this.model.createTimecard(checkValue);
 	},
@@ -121,6 +117,22 @@ itbmobile.TimecardListView = Backbone.View.extend({
     	this.model.on('add', this.addTimecard, this);
     },
     
+    //TODO ???
+	/*events:{
+		"click #newTimeCard":"showNewTCDialog",
+		"click #tcModalComfirm": "createTimecard"
+	},
+    
+	showNewTCDialog: function(){
+		$('#timecardModal').modal('toggle');
+	},
+
+	createTimecard: function(){
+    	console.log("TimecardListView  create Time card");
+    	var checkValue=$("#engagement").val();
+    	this.model.createNewTimeCard(checkValue);
+	},*/
+
     render:function () {
     	console.log("TimecardListView  render");
     	this.model.loadCards();
@@ -188,25 +200,33 @@ itbmobile.TimecardItemView = Backbone.View.extend({
 });
 
 itbmobile.TimeEntryListView = Backbone.View.extend({
-    initialize:function() {
-    	//this.listenTo(this.model,'add',this.addTimeentry);
-    },
-    render : function(){
+	events:{
+		"click #newTimeEntry":"showNewTEDialog"
+	},
+	showNewTEDialog: function(){
+		console.log("click new time entry");
+		console.log(this);
+		this.model.createNewTimeEntry();
+	},
+	initialize:function() {
+    	this.model.on('add', this.addTimeentry, this);
+	},
+	render : function(){
 		console.log('TimeEntryListView render');
 		this.$el.html(this.template(this.model.attributes));
 		this.addAllTimeentry();
 		return this;
-    },
-    remove:function() {
-        this.$el.remove();
-    },
-    addTimeentry:function (te) {
-        var teView = new itbmobile.TimeEntryItemView({model:te});
-        $("#timeEntryListViewContent", this.el).append(teView.render().el);
-    },
-    addAllTimeentry: function() {
-        this.model.each(this.addTimeentry, this);
-    }
+	},
+	remove:function() {
+	    this.$el.remove();
+	},
+	addTimeentry:function (te) {
+	    var teView = new itbmobile.TimeEntryItemView({model:te});
+	    $("#timeEntryListViewContent", this.el).append(teView.render().el);
+	},
+	addAllTimeentry: function() {
+	    this.model.each(this.addTimeentry, this);
+	}
 });
 
 itbmobile.TimeEntryItemView = Backbone.View.extend({
