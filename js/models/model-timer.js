@@ -55,7 +55,7 @@ itbmobile.TimerViewData = Backbone.Model.extend({
 	    	var index = todayDayStr.indexOf(selectDay);
 	       this.set('weekDay',todayDayStr[index]);
 	
-	       var today = new Date();
+	       var today = new Date(this.get('currentDay'));
 	       var todayDate = today.getDate();
 	       var todayIndex = today.getDay();
 	
@@ -68,7 +68,7 @@ itbmobile.TimerViewData = Backbone.Model.extend({
 	setDateData:function(today){
 		console.log("TimeDate setDateData");
 		var todayDay = today.getDay();
-	   this.set('weekDay','All');
+		this.set('weekDay','All');
 	    
 		var todayDate = today.getDate();
 		var rangeDateBegin = new Date(today);
@@ -143,6 +143,7 @@ itbmobile.TimeCardListViewData = Backbone.Collection.extend({
 				for (var i = 0, j = response.totalSize; i < j; i++) {
 					timecardData = response.records[i];
 					var timeentrys = new itbmobile.TimeEntryListViewData();
+					timeentrys.tcId = timecardData.Id;
 					if (timecardData.Time_Entries__r != null)
 					if (timecardData.Time_Entries__r.totalSize > 0) {
 						timeEntryData = timecardData.Time_Entries__r.records;
@@ -174,8 +175,6 @@ itbmobile.TimeCardListViewData = Backbone.Collection.extend({
 				//Engagement__c: null,
 				//RecordType.DeveloperName: 'Internal',
 				Resource_Assignment__c: 'a0AM00000033l4h',
-				//Start_Date__c: '2013-08-11', 
-				//End_Date__c: '2013-08-17'},
 				Start_Date__c: itbmobile.timerViewData.get('rangeDateBegin'),
 				End_Date__c: itbmobile.timerViewData.get('rangeDateEnd')},
 			function(response){
@@ -218,6 +217,7 @@ itbmobile.TimeEntryItemViewData = Backbone.Model.extend({
 
 itbmobile.TimeEntryListViewData = Backbone.Collection.extend({
 	model: itbmobile.TimeEntry,
+	tcId: null,
 	initialize:function(){
     },
 
@@ -225,12 +225,14 @@ itbmobile.TimeEntryListViewData = Backbone.Collection.extend({
 	},
 	
 	createNewTimeEntry:function() {
-		console.log("create new time entry");
+		console.log("create new time entry ; tcId = " + this.tcId);
 		var self = this;
 		client.create("Time_Entry__c",
-			{	Timecard__c: 'a1KM00000006NKVMA2',
-				Internal_Type__c: 'ITB301',
-				Date__c:"2013-08-13",
+			{	Timecard__c: self.tcId,
+				//Internal_Type__c: 'ITB301',
+				Status__c: 'Actual',
+				//Date__c:"2013-08-13",
+				Date__c:itbmobile.timerViewData.get('selectedDate') == ' ' ? itbmobile.timerViewData.get('currentDay') : itbmobile.timerViewData.get('selectedDate'),
 				Start_Time__c: '11:00', 
 				Breaks__c:'1',
 				End_Time__c: '19:00',
@@ -239,7 +241,8 @@ itbmobile.TimeEntryListViewData = Backbone.Collection.extend({
 				//TODO to be update
 				console.log("call back success");
 				console.log(response);
-				var dateCondition;
+				//after success, wo need add this data to collection
+				/*var dateCondition;
 				var soql = 'select Id, End_Date__c, Start_Date__c,Engagement__c,Engagement__r.Name,Engagement__r.Project_Code__c,'
 						+ 'Resource_Assignment__c, RecordType.DeveloperName, Status__c,Approval_Status__c,logYourTime__c,'
 							+ '(select Id,Active__c,Name,Resource_Assignment__c,Resource_Assignment__r.Name,'
@@ -280,7 +283,7 @@ itbmobile.TimeEntryListViewData = Backbone.Collection.extend({
 						}
 					}, function(response) {
 						console.log(response);
-					});
+					});*/
 			},function(response){
 				console.log("call back error");
 				console.log(response);
