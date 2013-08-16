@@ -19,6 +19,10 @@ itbmobile.TimerView = Backbone.View.extend({
 	initialize:function() {
 		this.timecardListViewData = this.model.getTimecardListViewData();
 		this.timecardListView = new itbmobile.TimecardListView({model:this.timecardListViewData});
+		
+		this.engagementListViewData = new itbmobile.EngagementListViewData();
+		this.engagementListView = new itbmobile.EngagementListView({
+			model:this.engagementListViewData});
 
 		this.model.on('change:rangeDateEnd', this.render, this);
     	this.model.on('change:selectedDate', this.renderChildren, this);
@@ -29,7 +33,13 @@ itbmobile.TimerView = Backbone.View.extend({
 		console.log("timer view rander");
 
 		this.$el.html(this.template(this.model.attributes));
+
+		//render engagement
+       $('.engagementContent', this.el).html(this.engagementListView.render().el);
+		this.engagementListViewData.loadData();
+
 		this.renderChildren();
+
 		//reset select:week_day
 		$("#week_Day").val(this.model.get('weekDay'));
 		return this;
@@ -50,8 +60,10 @@ itbmobile.TimerView = Backbone.View.extend({
 
 	createTimecard: function(){
     	console.log("timeview create Time card");
-    	var checkValue=$("#engagement").val();
-    	this.model.createTimecard(checkValue);
+    	var checkValueE=$("#engagementList").val();
+    	var checkValueRA=$("#resourceAssignmentList").val();
+
+    	this.model.createTimecard(checkValueE, checkValueRA);
 	},
 
 	goLastWeek : function() {
@@ -69,11 +81,6 @@ itbmobile.TimerView = Backbone.View.extend({
 
 itbmobile.TimecardListView = Backbone.View.extend({
 	initialize:function() {
-		var engagementListViewData = new itbmobile.EngagementListViewData();
-		engagementListViewData.loadData();
-		this.engagementListView = new itbmobile.EngagementListView({
-			model:engagementListViewData});
-
 		//this.model.on('reset', this.remove, this);
 		this.model.on('add', this.addTimecard, this);
 	},
@@ -84,10 +91,8 @@ itbmobile.TimecardListView = Backbone.View.extend({
 		console.log("TimecardListView  render");
 		this.model.loadCards();
 		this.$el.html(this.template(this.model.attributes));
-		//render engagement
-       $('.engagement', this.el).html(this.engagementListView.render().el);
 	   	
-	   return this;
+		return this;
 	},
 	remove:function() {
 	    this.$el.remove();
@@ -179,8 +184,11 @@ itbmobile.TimeEntryItemView = Backbone.View.extend({
 });
 
 itbmobile.EngagementItemView = Backbone.View.extend({ 
-	el: function(){
+	el_e: function(){
 		return "<option value='" + this.model.get("Engagement__c") + "'>" + this.model.get("Engagement_Name__c")+"</option>";
+	},
+	el_ra: function(){
+		return "<option value='" + this.model.get("Id") + "'>" + this.model.get("Role_Name__c")+"</option>";
 	}
 });
 
@@ -196,7 +204,8 @@ itbmobile.EngagementListView = Backbone.View.extend({
 	},
 	addItem: function(itemData){
 		var item = new itbmobile.EngagementItemView({model: itemData});
-		$('#engagementListView', this.el).append(item.el);
+		$('#engagementList', this.el).append(item.el_e());
+		$('#resourceAssignmentList', this.el).append(item.el_ra());
 	},
 	remove: function() {
 		this.model.destroy();

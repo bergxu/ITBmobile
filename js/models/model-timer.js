@@ -25,8 +25,8 @@ itbmobile.TimerViewData = Backbone.Model.extend({
 	    result = d.getFullYear()+'-'+dm+'-'+dd;
 	    return result;
     },
-	createTimecard: function(engagement){
-		this.timecardListViewData.createNewTimeCard(engagement);
+	createTimecard: function(e, ra){
+		this.timecardListViewData.createNewTimeCard(e, ra);
 	},
 	goPrev:function(){
 		console.log("TimeDate goPrev");
@@ -144,6 +144,7 @@ itbmobile.TimeCardListViewData = Backbone.Collection.extend({
 					timecardData = response.records[i];
 					var timeentrys = new itbmobile.TimeEntryListViewData();
 					timeentrys.tcId = timecardData.Id;
+					timeentrys.tcEng = timecardData.Engagement__c;
 					if (timecardData.Time_Entries__r != null)
 					if (timecardData.Time_Entries__r.totalSize > 0) {
 						timeEntryData = timecardData.Time_Entries__r.records;
@@ -166,16 +167,21 @@ itbmobile.TimeCardListViewData = Backbone.Collection.extend({
         });
 	},
 	
-	createNewTimeCard: function(engagement){
+	createNewTimeCard: function(engagement, resourceAssigment){
 		console.log("create new timecard engagement = " + engagement);
 		var self = this;
+		if(engagement == 'none' || engagement == 'internal'){
+			engagement = null;
+		}
+		if(resourceAssigment == 'none'){
+			resourceAssigment = null;
+		}
 		
 		//ajax one
 		client.create("Timecard__c",
-			{	Engagement__c: 'a07M0000002L7P0',
-				//Engagement__c: null,
+			{	Engagement__c: engagement,
 				//RecordType.DeveloperName: 'Internal',
-				Resource_Assignment__c: 'a0AM00000033l4h',
+				Resource_Assignment__c: resourceAssigment,
 				Start_Date__c: itbmobile.timerViewData.get('rangeDateBegin'),
 				End_Date__c: itbmobile.timerViewData.get('rangeDateEnd')},
 			function(response){
@@ -227,6 +233,7 @@ itbmobile.TimeEntryItemViewData = Backbone.Model.extend({
 itbmobile.TimeEntryListViewData = Backbone.Collection.extend({
 	model: itbmobile.TimeEntry,
 	tcId: null,
+	tcEng: null,
 	initialize:function(){
     },
 
@@ -238,7 +245,8 @@ itbmobile.TimeEntryListViewData = Backbone.Collection.extend({
 		var self = this;
 		client.create("Time_Entry__c",
 			{	Timecard__c: self.tcId,
-				Internal_Type__c: 'ITB301',
+				Engagement__c: self.tcEng,
+				//Internal_Type__c: 'ITB301',
 				Status__c: 'Actual',
 				Date__c:itbmobile.timerViewData.get('selectedDate') == ' ' ? itbmobile.timerViewData.get('currentDay') : itbmobile.timerViewData.get('selectedDate'),
 				Start_Time__c: '11:00', 
@@ -291,13 +299,12 @@ itbmobile.EngagementListViewData = Backbone.Collection.extend({
 	loadData:function(){
 		console.log('load engagement data');
     	var self = this;
-    	var soql = 'SELECT Engagement__c, Engagement_Name__c, OwnerId, Role_Name__c FROM ITBresourceAssignment__c'
+    	var soql = 'SELECT Engagement__c, Engagement_Name__c, OwnerId, Role_Name__c,Id FROM ITBresourceAssignment__c'
     		+ ' where OwnerId =\'' + uId + '\'';
 
     	client.query(soql,
 			function(res){
 				console.log('load eng success');
-				console.log(res);
 				if(res.totalSize > 0){
 					for(var i = 0; i < res.totalSize; i++){
 						var engagementItemViewData = new itbmobile.EngagementItemViewData(res.records[i]);
