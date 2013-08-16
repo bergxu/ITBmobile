@@ -1,15 +1,18 @@
-<div class="row timecardTitle" id="timeCardListView">
-    <div class="col-lg-3 col-sm-3 col-xs-3">Engagement
-    </div>
-    <div class="col-lg-3 col-sm-3 col-xs-3">Week Total
-    </div>
-    <div class="col-lg-3 col-sm-3 col-xs-3">Approval Status
-    </div>
-    <div class="col-lg-3 col-sm-3 col-xs-3"><a data-toggle="modal" id="newTimeCard" class="btn btn-primary btn-lg">create timecard</a></div>
+<table class="table table-hover table-bordered">
+  <thead class="table timecardTitle" id="timeCardListView">
+    <th>Engagement
+    </th>
+    <th>Week Total
+    </th>
+    <th>Approval Status
+    </th>
+    <th><a data-toggle="modal" id="newTimeCard" class="btn btn-primary btn-lg">create timecard</a></div>
 
-    <div id="timeCardListViewContent">
-    </div>
-</div>
+    <tbody id="timeCardListViewContent">
+    </tbody>
+  </thead> 
+</table>
+
 
 <div class="modal fade" id="timecardModal">
 <div class="modal-dialog">
@@ -18,7 +21,7 @@
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
       <h4 class="modal-title">Pick Engagement</h4>
     </div>
-    <div class="modal-body">
+    <div class="modal-body engagement">
         <label for="engagement">Pick Engagement</label>
         <select id="engagement">
             <option value="none">-None-</option>

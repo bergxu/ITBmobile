@@ -1,14 +1,14 @@
-<div class="col-lg-2 col-sm-2 col-xs-2">----------</div>
-<div class="col-lg-2 col-sm-2">
+<td>----------</td>
+<td>
     <% if(Resource_Assignment__r){ %> 
         <%= Resource_Assignment__r.Name %> 
     <% }else{ %>
         <%= Internal_Type__c %>
     <% } %> 
-</div>
-<div class="col-lg-1 col-sm-1 col-xs-1"><%= Start_Time__c %></div>
-<div class="col-lg-1 col-sm-1 col-xs-1"><%= Breaks__c %></div>
-<div class="col-lg-1 col-sm-1 col-xs-1"><%= End_Time__c %></div>
-<div class="col-lg-1 col-sm-1 col-xs-1"><%= Total_Hours__c %></div>
-<div class="col-lg-2 col-sm-2 col-xs-2"><%= Notes__c %></div>
-<div class="col-lg-2 col-sm-2 col-xs-2"> ***Entry item*** </div>
+</td>
+<td><%= Start_Time__c %></td>
+<td><%= Breaks__c %></td>
+<td><%= End_Time__c %></td>
+<td><%= Total_Hours__c %></td>
+<td><%= Notes__c %></td>
+<td> ***Entry item*** </td>	
