@@ -279,11 +279,11 @@ itbmobile.TimeEntryListViewData = Backbone.Collection.extend({
 });
 
 itbmobile.EngagementItemViewData = Backbone.Model.extend({
-	initialize:function () {
-	}
+
 });
 
 itbmobile.EngagementListViewData = Backbone.Collection.extend({
+
 	model:itbmobile.EngagementItemViewData,
 	initialize:function () {
     },
@@ -291,80 +291,19 @@ itbmobile.EngagementListViewData = Backbone.Collection.extend({
 	loadData:function(){
 		console.log('load engagement data');
     	var self = this;
-    	var soql = 'select Resource_Assignment__c from Time_Entry__c '+ 
-			' where Timecard__r.Resource__r.OwnerId =\'' + uId + '\' and Timecard__r.Approval_Status__c = \'Rejected\''+
-			' and Resource_Assignment__c != null'+
-			' and Resource_Assignment__r.Active__c = false'+
-			' and Date__c >= '+itbmobile.timerViewData.get('rangeDateBegin')+
-			' and Date__c <= '+itbmobile.timerViewData.get('rangeDateEnd');
+    	var soql = 'SELECT Engagement__c, Engagement_Name__c, OwnerId, Role_Name__c FROM ITBresourceAssignment__c'
+    		+ ' where OwnerId =\'' + uId + '\'';
 
     	client.query(soql,
 			function(res){
-				console.log('first soql');
+				console.log('load eng success');
 				console.log(res);
-				var raIds = [];
 				if(res.totalSize > 0){
-					for(var i=0,j=res.totalSize;i<j;i++){
-						raIds.push(res.records[i].Resource_Assignment__c);
+					for(var i = 0; i < res.totalSize; i++){
+						var engagementItemViewData = new itbmobile.EngagementItemViewData(res.records[i]);
+						self.add(engagementItemViewData);
 					}
 				}
-				if(raIds.length > 0){
-					raIds = raIds.join('\',\'');
-					raIds = '\'' + raIds + '\'';
-				}else{
-					raIds = '\'\'';
-				}
-				
-				client.query(
-		        	'Select Id,  Role_Name__c, Sub_Role__c,Engagement__c,Engagement__r.Name, '+
-		            'Engagement__r.Project_Code__c,Engagement__r.Project_Location__c,Engagement__r.Country__c,'+
-		            'Engagement__r.Country__r.Name,Resource__c,Opportunity_Line_Item_ID__c,Assigned_Budget__c,'+
-		            'Overall_Budget__c,Used_Hours__c,Scheduled_Hours__c,Aggregated_Approved_Hours__c,'+
-		            'Aggregated_Billing_Hours__c,Aggregated_Invoiced_Hours__c,Start_Date__c,End_Date__c '+                                                                                               
-		            'from ITBresourceAssignment__c where Start_Date__c <= '+itbmobile.timerViewData.get('rangeDateEnd') +  
-		            ' AND (End_Date__c = null or End_Date__c >= '+itbmobile.timerViewData.get('rangeDateBegin')+
-		            ') AND Resource__r.OwnerId = \''+uId+'\' AND Resource__r.Active__c = true'+ 
-					' AND Engagement__r.Status__c != \'Completed\''+
-					' AND Engagement__r.Status__c != \'Cancelled\''+
-					' AND Engagement__c != null' +
-					' AND (Active__c = true OR Id in ('+raIds+'))'+
-		            ' order by Engagement__r.Name, Name', 
-				    function(response){
-						console.log('second soql');
-				    	console.log(response);
-				    	var engagement_Map = {};
-				    	if(response.totalSize > 0){
-				    		var engagementId;
-					    	for(var k=0;k<response.totalSize;k++){
-						    	engagementId = response.records[k].Engagement__c;
-						    	if(!engagement_Map[engagementId]){
-							    	engagement_Map[engagementId] = {
-							    		engagementObj:response.records[k].Engagement__r,
-								    	raList : []
-							    	};
-						    	}
-
-								engagement_Map[engagementId]['raList'].push(response.records[k]);
-					    	}
-				    	}
-				    	var engagement,resourceassignment,ra_List,racollection;
-				    	for(var key in engagement_Map){
-					    	engagement = new itbmobile.EngagementItemViewData(engagement_Map[key]['engagementObj']);
-					    	ra_List = engagement_Map[key]['raList'];
-					    	racollection = new itbmobile.RaCollection();
-					    	for(var k=0;k<ra_List.length;k++){
-						    	resourceassignment = new itbmobile.ResourceAssignment(ra_List[k]);
-						    	racollection.add(resourceassignment);
-					    	}
-					    	engagement.set('raCollection',racollection);
-					    	self.add(engagement);
-				    	}
-				    },
-					function(response){
-						console.log('load eng err');
-						console.log(response);
-					}
-				);
 			},
 			function(response){
 				console.log('load eng err');
@@ -373,16 +312,4 @@ itbmobile.EngagementListViewData = Backbone.Collection.extend({
 		);
     }
 
-});
-
-itbmobile.ResourceAssignment = Backbone.Model.extend({
-    initialize:function () {
-        
-    }
-});
-
-itbmobile.RaCollection = Backbone.Collection.extend({
-	model: itbmobile.ResourceAssignment,
-    initialize:function(){
-    }
 });
