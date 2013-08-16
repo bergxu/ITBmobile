@@ -168,8 +168,9 @@ itbmobile.TimeCardListViewData = Backbone.Collection.extend({
 	
 	createNewTimeCard: function(engagement){
 		console.log("create new timecard engagement = " + engagement);
-		//TODO new a timecard
+		var self = this;
 		
+		//ajax one
 		client.create("Timecard__c",
 			{	Engagement__c: 'a07M0000002L7P0',
 				//Engagement__c: null,
@@ -179,9 +180,15 @@ itbmobile.TimeCardListViewData = Backbone.Collection.extend({
 				End_Date__c: itbmobile.timerViewData.get('rangeDateEnd')},
 			function(response){
 				//call back success
+				console.log(response);
 				console.log("call back success");
-				if(response.totalSize > 0){
-					console.log('response size = ' + response.totalSize);
+				var soql = 'select Id, End_Date__c, Start_Date__c,Engagement__c,Engagement__r.Name,Engagement__r.Project_Code__c, '
+								+ 'Resource_Assignment__c, RecordType.DeveloperName, Status__c,Approval_Status__c,logYourTime__c '
+								+ 'from Timecard__c '
+								+ 'where id = '
+								+ '\'' + response.id + '\'';
+				//ajax two
+				client.query(soql, function(response){
 					var timecard, timecardData, timeEntry, timeEntryData;
 					for (var i = 0, j = response.totalSize; i < j; i++) {
 						timecardData = response.records[i];
@@ -197,10 +204,12 @@ itbmobile.TimeCardListViewData = Backbone.Collection.extend({
 	
 						timecard = new itbmobile.TimeCardItemViewData(timecardData);
 						timecard.set('timeEntryListData', timeentrys);
-	
 						self.add(timecard);
-		            }
-		        }
+					}
+				},function(response){
+					console.log(response);
+					console.log("call back error");
+				});
 			},function(response){
 				//call back error
 				console.log(response);
@@ -229,61 +238,39 @@ itbmobile.TimeEntryListViewData = Backbone.Collection.extend({
 		var self = this;
 		client.create("Time_Entry__c",
 			{	Timecard__c: self.tcId,
-				//Internal_Type__c: 'ITB301',
+				Internal_Type__c: 'ITB301',
 				Status__c: 'Actual',
-				//Date__c:"2013-08-13",
 				Date__c:itbmobile.timerViewData.get('selectedDate') == ' ' ? itbmobile.timerViewData.get('currentDay') : itbmobile.timerViewData.get('selectedDate'),
 				Start_Time__c: '11:00', 
 				Breaks__c:'1',
 				End_Time__c: '19:00',
 				Notes__c: 'two'},
 			function(response){
-				//TODO to be update
 				console.log("call back success");
 				console.log(response);
-				//after success, wo need add this data to collection
-				/*var dateCondition;
-				var soql = 'select Id, End_Date__c, Start_Date__c,Engagement__c,Engagement__r.Name,Engagement__r.Project_Code__c,'
-						+ 'Resource_Assignment__c, RecordType.DeveloperName, Status__c,Approval_Status__c,logYourTime__c,'
-							+ '(select Id,Active__c,Name,Resource_Assignment__c,Resource_Assignment__r.Name,'
-							+ 'Resource_Assignment__r.Active__c,Engagement__c,Engagement__r.Name,Date__c,'
-							+ 'Internal_Type__c,Status__c,Location_Type__c,Start_Time__c,End_Time__c,Location__c,'
-							+ 'Country__c,Notes__c,Non_billable_Hours__c,Goodwill__c,Total_Hours__c,Bonus_Hours__c,'
-							+ 'Billable_Hours__c,Arrival_Start__c,Arrival_End__c,Departure_Start__c,Departure_End__c,'
-							+ 'Timecard__c,Timecard__r.Approval_Status__c,Timecard__r.RecordType.DeveloperName,'
-							+ 'Breaks__c,Plan_Status__c,Travel_Time__c '
-							+ 'from Time_Entries__r '
-							+ 'order by Resource_Assignment__r.Name, Date__c, Start_Time__c)'
-						+ 'from Timecard__c '
-						+ 'where Start_Date__c >= '
-						+ itbmobile.timerViewData.get('rangeDateBegin')
-						+ 'and End_Date__c <= '
-						+ itbmobile.timerViewData.get('rangeDateEnd')
-						+ 'AND Resource__r.Active__c = true and Resource__r.OwnerId = \''
-						+ uId
-						+ '\' and ownerId = \''
-						+ uId
-						+ '\' order by Approval_Status__c, Engagement__r.Name';
+				var dateCondition;
+				var soql = 'select Id,Active__c,Name,Resource_Assignment__c,Resource_Assignment__r.Name,'
+								+ 'Resource_Assignment__r.Active__c,Engagement__c,Engagement__r.Name,Date__c,'
+								+ 'Internal_Type__c,Status__c,Location_Type__c,Start_Time__c,End_Time__c,Location__c,'
+								+ 'Country__c,Notes__c,Non_billable_Hours__c,Goodwill__c,Total_Hours__c,Bonus_Hours__c,'
+								+ 'Billable_Hours__c,Arrival_Start__c,Arrival_End__c,Departure_Start__c,Departure_End__c,'
+								+ 'Timecard__c,Timecard__r.Approval_Status__c,Timecard__r.RecordType.DeveloperName,'
+								+ 'Breaks__c,Plan_Status__c,Travel_Time__c '
+								+ 'from Time_Entry__c '
+								+ 'where id = '
+								+ '\'' + response.id + '\'';
 
 				client.query(soql, function(response) {
-						if (response.totalSize > 0) {
-							console.log('response size = ' + response.totalSize);
-							var timecard, timecardData, timeEntry, timeEntryData;
-							for (var i = 0, j = response.totalSize; i < j; i++) {
-								timecardData = response.records[i];
-								if (timecardData.Time_Entries__r != null)
-									if (timecardData.Time_Entries__r.totalSize > 0) {
-										timeEntryData = timecardData.Time_Entries__r.records;
-										for (var k = 0, t = timeEntryData.length; k < t; k++) {
-											timeEntry = new itbmobile.TimeEntryItemViewData(timeEntryData[k]);
-											self.add(timeEntry);
-										}
-									}
-							}
-						}
+						console.log(response);
+						var timeEntry, timeEntryData;
+						for (var i = 0, j = response.totalSize; i < j; i++) {
+							timeEntryData = response.records[i];
+							timeEntry = new itbmobile.TimeEntryItemViewData(timeEntryData);
+							self.add(timeEntry);
+			            }
 					}, function(response) {
 						console.log(response);
-					});*/
+					});
 			},function(response){
 				console.log("call back error");
 				console.log(response);
