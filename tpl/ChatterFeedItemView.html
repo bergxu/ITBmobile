@@ -1,0 +1,29 @@
+<td>
+	<img src="<%= photoUrl %>" style="width:60px"/>
+</td>
+<td>
+	<% if (parent.type == 'CollaborationGroup') { %><span style="color:#006699;"><span class="glyphicon glyphicon-th-large"></span> <%= parent.name %></span> - <% }
+		else { %> <span style="color:#4169E1;"><span class="glyphicon glyphicon-user"></span></span> <% } %>
+	<span style="color:#4169E1;font-weight:bold;"><%= actor.name %></span>
+	
+	<p>
+		<%= body.text %>
+	</p>
+	
+	<p>
+		<span class="pull-left">
+			<% if (likes.total > 0) { %> <span style="color:#CC9933;"><span class="glyphicon glyphicon-thumbs-up"></span></span> <%= likes.total %> <% }
+				else { %> <span><span class="glyphicon glyphicon-thumbs-up"></span> <%= likes.total %></span> <% } %>
+			
+			&nbsp;&nbsp;&nbsp;
+			<% if (comments.total > 0) { %> <span style="color:#CC9933;"><span class="glyphicon glyphicon-comment"></span></span> <%= comments.total %> <% }
+				else { %> <span><span class="glyphicon glyphicon-comment"></span> <%= comments.total %></span> <% } %>
+			
+			&nbsp;&nbsp;&nbsp;
+			<% if (isBookmarkedByCurrentUser == true) { %> <span style="color:#CC9933;"><span class="glyphicon glyphicon-bookmark"></span></span> <% }
+				else { %> <span><span class="glyphicon glyphicon-bookmark"></span></span> <% } %>
+		</span>
+		
+		<span style="font-size:75%;vertical-align:bottom;" class="pull-right"><%= relativeCreatedDate %></span>
+	</p>
+</td>

@@ -1,427 +1,411 @@
-itbmobile.ChatterView = Backbone.View.extend({
-    render: function () {
-        this.el = this.template(this.model.attributes);
-
-        return this;
-    }
-
+approvalApp.ChatterMeView = approvalApp.BaseView.extend({
+    
 });
 
-itbmobile.ChatterCommentView = Backbone.View.extend({
-  render: function () {
-        this.el = this.template(this.model.attributes);
+approvalApp.ChatterNewPostView = approvalApp.BaseView.extend({
 
-        return this;
+	events: {
+		"click #saveBtn": "save"
+    },
+    
+    save: function() {
+    	var self = this;
+    	if(this.model.get("type") == "record") {
+	    	this.model.saveRecord({
+	    		fields: {
+	    			body: $("#newPostBody").val()
+	    		}, 
+	    		success: function(feedItem) {
+		    		approvalApp.router.navigate(self.model.get("retUrl"), {trigger: true});
+		    	}
+	    	});
+    	}
+    	else {
+	    	this.model.save({
+	    		fields: {
+	    			body: $("#newPostBody").val()
+	    		}, 
+	    		success: function(feedItem) {
+		    		approvalApp.router.navigate("chatterHome", {trigger: true});
+		    	}
+	    	});
+    	}
     }
-
+    
 });
 
+approvalApp.ChatterHomeView = approvalApp.ScorllableListView.extend({
 
+	wrapperId: "feedItemListWrapper",
 
-itbmobile.ChatterHeaderView = Backbone.View.extend({
-
-    render: function () {
-        this.$el.html('<ul class="nav"><li><a href="#"><i class="icon-home icon-2x"></i></a></li></ul><div class="navbar-inner"><a href="javascript:void(1);" onclick="chatterOperate.showNewFeedPanel(this)"><i class="icon-comments icon-2x"></i></a></div>');
-        return this;
-    }
-});
-
-Date.prototype.format = function (format) {
-    var o = {
-        "M+": this.getMonth() + 1, //month   
-        "d+": this.getDate(),    //day   
-        "h+": this.getHours(),   //hour   
-        "m+": this.getMinutes(), //minute   
-        "s+": this.getSeconds(), //second   
-        "q+": Math.floor((this.getMonth() + 3) / 3), //quarter   
-        "S": this.getMilliseconds() //millisecond   
-    }
-    if (/(y+)/.test(format)) format = format.replace(RegExp.$1,
-     (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o) if (new RegExp("(" + k + ")").test(format))
-        format = format.replace(RegExp.$1,
-       RegExp.$1.length == 1 ? o[k] :
-         ("00" + o[k]).substr(("" + o[k]).length));
-    return format;
-};
-
-var chatterOperate = {
-    fobj: null,
-    Feeds: [],
-    result: null,
-    resultArr: [],
-    addComments: [],
-    isquery: 0,
-    groups: null,
-    getPostion: function (e) {
-        var t = e.offsetTop;
-        var l = e.offsetLeft;
-        var w = e.offsetWidth;
-        var h = e.offsetHeight;
-        while (e = e.offsetParent) {
-            t += e.offsetTop;
-            l += e.offsetLeft;
-        }
-
-        return { top: t, left: l, height: h, width: w };
-
+    events:{
+         "click tr": "showDetail"
     },
-    wait: function () {
-        $("#waitflag").show();
-        $("#fullbg").show();
-    },
-    hideWait: function () {
-        $("#waitflag").hide();
-        $("#fullbg").hide();
-    },
-    showGroupChoicePanel: function () {
-        var ad = chatterOperate.getPostion($("#btnselectChoice").get(0));
-        document.getElementById("selectChoice").style.left = ad.left + "px";
-        document.getElementById("selectChoice").style.top = (ad.top + ad.height) + "px";
-        document.getElementById("selectChoice").style.display = "block";
-    },
-    newFeed: function () {
-        chatterOperate.wait();
-        var text = $("#feedtxt").val();
-        var info = { "body":
-		{
-		    "messageSegments": [
-		{
-		    "type": "Text",
-		    "text": text
-		}
-		]
-		}
-        };
-        var path = '/' + client.apiVersion + "/chatter/feeds/news/me/feed-items?text=New+post";
-
-        if ($("#selectGroup:visible").length > 0) {
-            var id = $("#selectGroup").find("option:selected").eq(0).attr("groupid");
-            var groupname = $("#selectGroup").find("option:selected").eq(0).text();
-            var groupimg = null;
-
-            for (var k = 0; k <= chatterOperate.groups.groups.length - 1; k++) {
-                if (chatterOperate.groups.groups[k].id == id) {
-                    groupimg = chatterOperate.groups.groups[k].photo.standardEmailPhotoUrl;
-                    break;
-
-                }
-
-            }
-
-
-            path = '/' + client.apiVersion + "/chatter/feeds/record/" + id + "/feed-items";
-            client.ajax(path, function (response) {
-                var chatter = new itbmobile.chatterData();
-                var feeds = [];
-                feeds.push(response);
-                chatter.set({ first: 0, user: itbmobile.currentUser, newgroup: { id: id, img: groupimg, name: groupname }, data: { items: feeds} });
-                var mychatterView = new itbmobile.ChatterView({ model: chatter });
-                mychatterView.render();
-                var content = mychatterView.el;
-                $("#content").prepend(content);
-                $("#commentinputDialog").hide();
-                chatterOperate.hideWait();
-                $("#content").html(itbmobile.chatterView.el);
-                return;
-            }, function (response) {
-                //error
-                alert("error");
-                return;
-            }, "POST", JSON.stringify(info)
-		);
-
-            return;
-        }
-
-
-        client.ajax(path, function (response) {
-            var chatter = new itbmobile.chatterData();
-            var feeds = [];
-            feeds.push(response);
-            chatter.set({ first: 0, user: itbmobile.currentUser, newgroup: false, data: { items: feeds} });
-            var mychatterView = new itbmobile.ChatterView({ model: chatter });
-            mychatterView.render();
-            var content = mychatterView.el;
-            $("#content").prepend(content);
-            $("#commentinputDialog").hide();
-            chatterOperate.hideWait();
-            $("#content").html(itbmobile.chatterView.el);
-        }, function (response) {
-            //error
-            alert("error");
-        }, "POST", JSON.stringify(info)
-    );
-
-    },
-
-    commentlike: function (obj, cid) {
-        chatterOperate.wait();
-        var fobj = $(obj).parents("[myid='commentpanel']");
-        var commentlikes = fobj.find("[myid='clikes']").eq(0);
-
-
-        if (obj.src.indexOf("unlike.png") != -1) {
-            var likeli = fobj.find('[clcid="' + itbmobile.currentUser.id + '"]');
-            var likeid = likeli.attr("clikeid");
-            chatterOperate.unlike(likeid, function (response) {
-
-                obj.src = "images/like.png";
-                likeli.remove();
-                chatterOperate.hideWait();
-
-
-                $("#content").html(itbmobile.chatterView.el);
-            });
-
-            return;
-        }
-
-
-
-        if (obj.src.indexOf("like.png") != -1) {
-
-            var path = '/' + client.apiVersion + "/chatter/comments/" + cid + "/likes";
-            client.ajax(path, function (response) {
-                var li = '<li clcid="' + itbmobile.currentUser.id + '" clikeid="' + response.id + '"><a href="javascript:void(0)"><img src="images/like.png"/> you</a></li>';
-                if (commentlikes.length == 0) {
-
-                    fobj.append('<ul myid="clikes" class="nav nav-list">' + li + "</ul>");
-                }
-                else {
-                    commentlikes.append(li);
-                }
-                obj.src = "images/unlike.png";
-                chatterOperate.hideWait();
-
-                $("#content").html(itbmobile.chatterView.el);
-            }, function (response) {
-
-                alert("error");
-            }, "POST");
-
-            return;
-        }
-
-
-
-
-
-    },
-
-    dolike: function (obj, cid) {
-        chatterOperate.wait();
-        var fobj = $(obj).parents('[cid]');
-        var commlike = fobj.find("[myid='commentlike']").eq(0);
-        if (obj.src.indexOf("unlike.png") != -1) {
-            var likeli = commlike.find('[lcid="' + itbmobile.currentUser.id + '"]');
-            var likeid = likeli.attr("likeid");
-            chatterOperate.unlike(likeid, function (response) {
-                chatterOperate.hideWait();
-                obj.src = "images/like.png";
-                likeli.remove();
-            });
-            itbmobile.chatterView.el = $("#content").html();
-            return;
-        }
-
-
-        var path = '/' + client.apiVersion + "/chatter/feed-items/" + cid + "/likes";
-        client.ajax(path, function (response) {
-
-            chatterOperate.hideWait();
-            obj.src = "images/unlike.png";
-            var li = '<ul myid="commentlike" class="nav nav-list"><li lcid="' + itbmobile.currentUser.id + '" likeid="' + response.id + '"><a href="javascript:void(0)"><img src="images/like.png" /> you</a></li>';
-            if (commlike.length == 0) {
-                fobj.find("[myid='addcommentDIV']").eq(0).after('<ul myid="commentlike" class="nav nav-list">' + li + "</ul>");
-            }
-            else {
-                commlike.eq(0).prepend(li);
-            }
-            itbmobile.chatterView.el = $("#content").html();
-
-        }, function (response) {
-            //error
-            alert("error");
-        }, "POST"
-    );
-
-    }
-    ,
-    unlike: function (likeid, callback) {
-        var path = '/' + client.apiVersion + "/chatter/likes/" + likeid;
-        client.ajax(path, callback, function (response) {
-            alert("error");
-        }, "DELETE");
-    },
-    showNewFeedPanel: function () {
-        $("#commentinputDialog").show();
-
-    },
-    addOneFeed: function () {
-        $("#newFeedDialog").show();
-    },
-    addonecomment: function (obj) {
-        chatterOperate.fobj = $(obj).parents('[cid]');
-        $("#commentDialog").show();
-    }
-    ,
-    hideAddonecomment: function (obj) {
-        $(obj).parent().parent().hide();
-    }
-    ,
-
-
-    newAcomment: function () {
-
-        chatterOperate.wait();
-
-        var fobj = chatterOperate.fobj;
-        var feedID = fobj.attr("cid");
-        var text = $('#commenttxt').val();
-        var text1 = text.replace(/\n/g, '<br />');
-        var panel = fobj.find("[myid='addcommentDIV']").eq(0);
-        var path = '/' + client.apiVersion + "/chatter/feed-items/" + feedID + "/comments?text=New+comment";
-        var info = { "body":
-        {
-            "messageSegments": [
-        {
-            "type": "Text",
-            "text": text
-        }
-        ]
-        }
-        };
-
-
-        client.ajax(path, function (response) {
-            chatterOperate.hideWait();
-            var ccid = response.id;
-            var scdt = new Date(response.createdDate).format("yyyy-MM-dd hh:mm:ss");
-            var chatter = new itbmobile.chatterData();
-            chatter.set({ name: response.user.name, dt: scdt, text: text1, id: response.id });
-            var myView = new itbmobile.ChatterCommentView({ model: chatter });
-            myView.render();
-            var content = myView.el;
-            if (panel.next().attr("myid") == "commentlike") {
-                panel.next().after(content);
-            }
-            else {
-                panel.after(content);
-            }
-            $('#commenttxt').val("");
-            $("#commentDialog").hide();
-
-            itbmobile.chatterView.el = $("#content").html();
-
-        }, function (response) {
-            //error
-            alert("add error");
-        }, "POST", JSON.stringify(info)
-        );
-
-    },
-    getAllGroups: function () {
-        var path = '/' + client.apiVersion + '/chatter/groups';
-        client.ajax(path, function (response) {
-            chatterOperate.groups = response;
-            chatterOperate.getAll();
-        },
-           function (response) {
-
-               alert("error");
-
-           });
-    }
-    ,
-    getAll: function () {
-        chatterOperate.wait();
-        var path = '/' + client.apiVersion + "/chatter/feeds/news/me/feed-items";
-        client.ajax(path, function (response) {
-            chatterOperate.hideWait();
-            chatterOperate.result = response;
-            chatterOperate.resultArr.push(response);
-            var chatter = new itbmobile.chatterData();
-            chatter.set({ first: 1, user: itbmobile.currentUser, newgroup: false, data: response });
-            itbmobile.chatterView = new itbmobile.ChatterView({ model: chatter });
-            itbmobile.chatterView.render();
-      
-            itbmobile.chatterView.el = $("#content").html();
-            $(window).bind("scroll", function () {
-
-                if (window.location.href.indexOf("#chatter") == -1) {
-                    $(window).unbind("scroll");
-                    return;
-                }
-                var wh = $(window).height();
-                if (!chatterOperate.result.nextPageUrl) {
-                    return;
-                }
-
-                if ((document.body.scrollHeight - wh - document.body.scrollTop) <= 10) {
-
-                    $("#bottompanel").show();
-                    chatterOperate.nextpage();
-                }
-            });
-
-
-            $("#selectChoice li").bind("click", function () {
-                $("#btnselectChoice").html($(this).text() + ' <span class="caret"></span>');
-                $("#selectChoice").hide();
-
-                if ($(this).text() == "My Fellows") {
-                    $("#selectGroup").hide();
-
-                }
-                else {
-                    $("#selectGroup").show();
-
-                }
-            });
-
-
-            $('#selectGroup').html("");
-            var li = "";
-            $.each(chatterOperate.groups.groups, function (i, n) {
-                li = li + '<option groupid="' + n.id + '"><a href="javascript:void(0)">' + n.name + '</a></option>';
-            });
-            $('#selectGroup').html(li);
-            chatterOperate.hideWait();
-
-
-            $("#content").html(itbmobile.chatterView.el);
-
-
-        }, function () {
-            //error
-            alert("load error");
+    
+    initialize: function() {
+    	var self = this;
+        this.model.on("change", this.render, this);
+        this.items = new approvalApp.ChatterFeedItemCollection();
+        this.items.on("reset", this.reset, this);
+        this.items.on("add", function(item) {
+            $(self.getItemListWrapperBodySelector(item), self.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
         });
-
     },
-    nextpage: function () {
-        if (!chatterOperate.result.nextPageUrl) {
-            return;
-        }
 
-        var st = chatterOperate.result.nextPageUrl.split("chatter/feeds/news/")[1];
-        var path = '/' + client.apiVersion + "/chatter/feeds/news/" + st;
-        client.ajax(path, function (response) {
-            $("#bottompanel").hide();
-            chatterOperate.resultArr.push(response);
-            chatterOperate.result = response;
-            var chatter = new itbmobile.chatterData();
-            chatter.set({ first: 0, user: itbmobile.currentUser, newgroup: false, data: response });
-            mychatterView = new itbmobile.ChatterView({ model: chatter });
-            mychatterView.render();
-            var child = $("#content").append(mychatterView.el);
-            itbmobile.chatterView.el = $("#content").html();
-        }, function (response) {
-            //error
-            alert("load error");
-          
+    render: function() {
+        this.$el.html(this.template(this.model.attributes));
+        _.each(this.items.models, function(item) {
+            $(this.getItemListWrapperBodySelector(item), this.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
+        }, this);
+        return this;
+    },
+    
+    loadData: function() {
+    	var self = this;
+    	this.togglePageLoading();
+        this.items.myNewsFeedItems({reset: true, success: function() {
+        	self.togglePageLoading();
+	        self.loadScroll(self.wrapperId);
+        }});
+    },
+    
+    refresh: function() {
+    	var self = this;
+        this.items.myNewsFeedItems({reset: true, success: function() {
+	        self.loadScroll(self.wrapperId);
+        }});
+    },
+	
+	pullDownAction: function() {
+		this.refresh();
+	}
+	
+/*
+	pullUpAction: function() {
+	},
+*/
+	
+/*
+	showDetail: function(e) {
+		approvalApp.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
+	}
+*/
+    
+});
+
+approvalApp.ChatterAtMeView = approvalApp.ScorllableListView.extend({
+
+	wrapperId: "feedItemListWrapper",
+
+    events:{
+         "click tr": "showDetail"
+    },
+    
+    initialize: function() {
+    	var self = this;
+        this.model.on("change", this.render, this);
+        this.items = new approvalApp.ChatterFeedItemCollection();
+        this.items.on("reset", this.reset, this);
+        this.items.on("add", function(item) {
+            $(self.getItemListWrapperBodySelector(item), self.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
         });
+    },
 
-    }
+    render: function() {
+        this.$el.html(this.template(this.model.attributes));
+        _.each(this.items.models, function(item) {
+            $(this.getItemListWrapperBodySelector(item), this.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
+        }, this);
+        return this;
+    },
+    
+    loadData: function() {
+    	var self = this;
+    	this.togglePageLoading();
+        this.items.atMeFeedItems({reset: true, success: function() {
+        	self.togglePageLoading();
+	        self.loadScroll(self.wrapperId);
+        }});
+    },
+    
+    refresh: function() {
+    	var self = this;
+        this.items.atMeFeedItems({reset: true, success: function() {
+	        self.loadScroll(self.wrapperId);
+        }});
+    },
+	
+	pullDownAction: function() {
+		this.refresh();
+	}
+	
+/*
+	pullUpAction: function() {
+	},
+*/
+	
+/*
+	showDetail: function(e) {
+		approvalApp.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
+	}
+*/
+    
+});
 
-}
+approvalApp.ChatterBookmarkView = approvalApp.ScorllableListView.extend({
+
+	wrapperId: "feedItemListWrapper",
+
+    events:{
+         "click tr": "showDetail"
+    },
+    
+    initialize: function() {
+    	var self = this;
+        this.model.on("change", this.render, this);
+        this.items = new approvalApp.ChatterFeedItemCollection();
+        this.items.on("reset", this.reset, this);
+        this.items.on("add", function(item) {
+            $(self.getItemListWrapperBodySelector(item), self.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
+        });
+    },
+
+    render: function() {
+        this.$el.html(this.template(this.model.attributes));
+        _.each(this.items.models, function(item) {
+            $(this.getItemListWrapperBodySelector(item), this.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
+        }, this);
+        return this;
+    },
+    
+    loadData: function() {
+    	var self = this;
+    	this.togglePageLoading();
+        this.items.bookmarkFeedItems({reset: true, success: function() {
+        	self.togglePageLoading();
+	        self.loadScroll(self.wrapperId);
+        }});
+    },
+    
+    refresh: function() {
+    	var self = this;
+        this.items.bookmarkFeedItems({reset: true, success: function() {
+	        self.loadScroll(self.wrapperId);
+        }});
+    },
+	
+	pullDownAction: function() {
+		this.refresh();
+	}
+	
+/*
+	pullUpAction: function() {
+	},
+*/
+	
+/*
+	showDetail: function(e) {
+		approvalApp.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
+	}
+*/
+    
+});
+
+//Chatter Groups
+approvalApp.ChatterGroupView = approvalApp.ScorllableListView.extend({
+
+	wrapperId: "groupItemListWrapper",
+
+    events:{
+         "click tr": "showFeeds"
+    },
+    
+    initialize: function() {
+    	var self = this;
+        this.model.on("change", this.render, this);
+        this.items = new approvalApp.ChatterGroupItemCollection();
+        this.items.on("reset", this.reset, this);
+        this.items.on("add", function(item) {
+            $(self.getItemListWrapperBodySelector(item), self.el).append(new approvalApp.ChatterGroupItemView({model: item}).render().el);
+        });
+    },
+
+    render: function() {
+        this.$el.html(this.template(this.model.attributes));
+        _.each(this.items.models, function(item) {
+            $(this.getItemListWrapperBodySelector(item), this.el).append(new approvalApp.ChatterGroupItemView({model: item}).render().el);
+        }, this);
+        return this;
+    },
+    
+    loadData: function() {
+    	var self = this;
+    	this.togglePageLoading();
+        this.items.allGroupItems({reset: true, success: function() {
+        	self.togglePageLoading();
+	        self.loadScroll(self.wrapperId);
+        }});
+    },
+    
+    refresh: function() {
+    	var self = this;
+        this.items.allGroupItems({reset: true, success: function() {
+	        self.loadScroll(self.wrapperId);
+        }});
+    },
+	
+	pullDownAction: function() {
+		this.refresh();
+	},
+	
+/*
+	pullUpAction: function() {
+	},
+*/
+	
+	showFeeds: function(e) {
+		approvalApp.router.navigate("chatterGroup/" + $(e.currentTarget).data("approvalItemid") +"/feeds", {trigger: true});
+	}
+    
+});
+
+approvalApp.ChatterGroupItemView = approvalApp.ItemView.extend({
+
+	el: function() {
+		return "<tr data-approval-itemid='" + this.model.get("id") + "'></tr>";
+	}
+});
+
+approvalApp.ChatterGroupFeedsView = approvalApp.ScorllableListView.extend({
+
+	wrapperId: "feedItemListWrapper",
+
+    events:{
+         "click tr": "showDetail"
+    },
+    
+    initialize: function() {
+    	var self = this;
+        this.model.on("change", this.render, this);
+        this.items = new approvalApp.ChatterFeedItemCollection();
+        this.items.on("reset", this.reset, this);
+        this.items.on("add", function(item) {
+            $(self.getItemListWrapperBodySelector(item), self.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
+        });
+    },
+
+    render: function() {
+        this.$el.html(this.template(this.model.attributes));
+        _.each(this.items.models, function(item) {
+            $(this.getItemListWrapperBodySelector(item), this.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
+        }, this);
+        return this;
+    },
+    
+    loadData: function() {
+    	var self = this;
+    	this.togglePageLoading();
+        this.items.groupFeedItems({reset: true, data: {id:this.model.get('id')}, success: function() {
+        	self.togglePageLoading();
+	        self.loadScroll(self.wrapperId);
+        }});
+    },
+    
+    refresh: function() {
+    	var self = this;
+        this.items.groupFeedItems({reset: true, data: {id:this.model.get('id')}, success: function() {
+	        self.loadScroll(self.wrapperId);
+        }});
+    },
+	
+	pullDownAction: function() {
+		this.refresh();
+	}
+	
+/*
+	pullUpAction: function() {
+	},
+*/
+	
+/*
+	showDetail: function(e) {
+		approvalApp.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
+	}
+*/
+    
+});
+
+approvalApp.ChatterFeedItemView = approvalApp.ItemView.extend({
+
+	el: function() {
+		return "<tr data-approval-itemid='" + this.model.get("id") + "'></tr>";
+	}
+
+});
+
+//Chatter Users
+approvalApp.ChatterUserView = approvalApp.ScorllableListView.extend({
+
+	wrapperId: "userItemListWrapper",
+
+    events:{
+         "click tr": "showDetail"
+    },
+    
+    initialize: function() {
+    	var self = this;
+        this.model.on("change", this.render, this);
+        this.items = new approvalApp.UserCollection();
+        this.items.on("reset", this.reset, this);
+        this.items.on("add", function(item) {
+            $(self.getItemListWrapperBodySelector(item), self.el).append(new approvalApp.ChatterUserItemView({model: item}).render().el);
+        });
+    },
+
+    render: function() {
+        this.$el.html(this.template(this.model.attributes));
+        _.each(this.items.models, function(item) {
+            $(this.getItemListWrapperBodySelector(item), this.el).append(new approvalApp.ChatterUserItemView({model: item}).render().el);
+        }, this);
+        return this;
+    },
+    
+    loadData: function() {
+    	var self = this;
+    	this.togglePageLoading();
+        this.items.users({reset: true, success: function() {
+        	self.togglePageLoading();
+	        self.loadScroll(self.wrapperId);
+        }});
+    },
+    
+    refresh: function() {
+    	var self = this;
+        this.items.users({reset: true, success: function() {
+	        self.loadScroll(self.wrapperId);
+        }});
+    },
+	
+	pullDownAction: function() {
+		this.refresh();
+	}
+	
+/*
+	pullUpAction: function() {
+	},
+*/
+	
+/*
+	showDetail: function(e) {
+		approvalApp.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
+	}
+*/
+    
+});
+
+approvalApp.ChatterUserItemView = approvalApp.ItemView.extend({
+
+	el: function() {
+		return "<tr data-approval-itemid='" + this.model.get("id") + "'></tr>";
+	}
+});
