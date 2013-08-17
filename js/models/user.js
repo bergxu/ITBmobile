@@ -38,3 +38,27 @@ itbmobile.User = Backbone.Model.extend({
     }
 
 });
+
+itbmobile.UserCollection = Backbone.Collection.extend({
+
+    model: itbmobile.User,
+    
+    users: function(options) {
+        options = options ? _.clone(options) : {};
+        var self = this;
+        var data = options.data ? options.data : {};
+        
+        client.ajax('/' + apiVersion + '/chatter/users', function(items) {
+	        if (options.reset) {
+	            self.reset();
+	        }
+	        for (var i = 0; i < items.users.length; i++) {
+	            var item = new itbmobile.User(items.users[i]);
+	            self.push(item);
+	        }
+	        if (options.success) {
+	            options.success(items);
+	        }
+        });
+    }
+});
