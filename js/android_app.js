@@ -26,7 +26,8 @@ var itbmobile = {
 itbmobile.Router = Backbone.Router.extend({
 
     routes: {
-        "":                 "home",
+        "":                 "index",
+        "index":				  "index",
         "home":             "home",
         "timer":            "timer",
         "chatter":                       "chatterHome", 
@@ -50,6 +51,24 @@ itbmobile.Router = Backbone.Router.extend({
         this.$content = $("#content");
     },
 
+    index:function (){
+		if (itbmobile.currentUser == null) {
+			itbmobile.indexHeaderView = new itbmobile.IndexHeaderView();
+			itbmobile.indexHeaderView.render();
+			this.$content.html(itbmobile.indexHeaderView.el);
+		} else {
+			if(!itbmobile.indexHeaderView){
+				itbmobile.indexHeaderView = new itbmobile.IndexHeaderView();
+				itbmobile.indexHeaderView.render();
+			}
+			this.$content.html(itbmobile.indexHeaderView.el);
+
+			itbmobile.indexContentView = new itbmobile.IndexContentView();
+			itbmobile.indexContentView.render();
+			this.$content.append(itbmobile.indexContentView.el);
+        }
+    	
+    },
     home: function () {
         if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
             // user's already logged in
@@ -247,7 +266,7 @@ $(document).on("ready", function () {
                 if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
                     itbmobile.currentResource.fetchByOwner({data: {ownerId: itbmobile.currentUser.get("id")}, success: function() {
                     itbmobile.currentUser.set({resourceId: itbmobile.currentResource.get("Id")});
-					  itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "TimerView", "SetupView","EngagementListView", "TimerHeaderView", "TimecardItemView", "TimecardListView", "TimeEntryItemView", "TimeEntryListView","ChatterHomeView", "ChatterAtMeView", "ChatterBookmarkView", "ChatterMeView", "ChatterFeedItemView", "ChatterGroupView", "ChatterGroupItemView", "ChatterGroupFeedsView", "ChatterUserView", "ChatterUserItemView", "ChatterNewPostView"], function () {
+					  itbmobile.loadTemplates(["ShellView", "IndexHeaderView", "IndexContentView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "TimerView", "SetupView","EngagementListView", "TimerHeaderView", "TimecardItemView", "TimecardListView", "TimeEntryItemView", "TimeEntryListView","ChatterHomeView", "ChatterAtMeView", "ChatterBookmarkView", "ChatterMeView", "ChatterFeedItemView", "ChatterGroupView", "ChatterGroupItemView", "ChatterGroupFeedsView", "ChatterUserView", "ChatterUserItemView", "ChatterNewPostView"], function () {
                                                  itbmobile.router = new itbmobile.Router();
                                                   Backbone.history.start();
                                                   });
