@@ -1,4 +1,4 @@
-approvalApp.BaseView = Backbone.View.extend({
+itbmobile.BaseView = Backbone.View.extend({
 	
 	togglePageLoading: function() {
 	    if ($(".pageLoading").length > 0) {
@@ -24,11 +24,11 @@ approvalApp.BaseView = Backbone.View.extend({
 	
 });
 
-approvalApp.ListView = approvalApp.BaseView.extend({
+itbmobile.ListView = itbmobile.BaseView.extend({
 	
 });
 
-approvalApp.ScorllableListView = approvalApp.ListView.extend({
+itbmobile.ScorllableListView = itbmobile.ListView.extend({
 
 	loadScroll: function(wrapperId) {
 		this.pullDownEl = $('.pullDown', this.el).get(0);
@@ -122,5 +122,5 @@ approvalApp.ScorllableListView = approvalApp.ListView.extend({
 	
 });
 
-approvalApp.ItemView = approvalApp.BaseView.extend({
+itbmobile.ItemView = itbmobile.BaseView.extend({
 });

@@ -1,5 +1,5 @@
 //Chatter New Post
-approvalApp.ChatterNewPost = Backbone.Model.extend({
+itbmobile.ChatterNewPost = Backbone.Model.extend({
 
 	save: function(options) {
 		var self = this;
@@ -20,7 +20,7 @@ approvalApp.ChatterNewPost = Backbone.Model.extend({
         requestBody.body.messageSegments[0].text = fields.body;
         
         
-        forcetkClient.ajax('/' + apiVersion + '/chatter/feeds/news/me/feed-items', 
+        client.ajax('/' + apiVersion + '/chatter/feeds/news/me/feed-items', 
 	        function(feedItem) {
 		        if (options.success) {
 		            options.success(feedItem);
@@ -51,7 +51,7 @@ approvalApp.ChatterNewPost = Backbone.Model.extend({
         requestBody.body.messageSegments[0].text = fields.body;
         
         
-        forcetkClient.ajax('/' + apiVersion + '/chatter/feeds/record/' + self.get("id") + '/feed-items', 
+        client.ajax('/' + apiVersion + '/chatter/feeds/record/' + self.get("id") + '/feed-items', 
 	        function(feedItem) {
 		        if (options.success) {
 		            options.success(feedItem);
@@ -65,25 +65,25 @@ approvalApp.ChatterNewPost = Backbone.Model.extend({
 });
 
 //Chatter Feed Items
-approvalApp.ChatterFeedItem = Backbone.Model.extend({
+itbmobile.ChatterFeedItem = Backbone.Model.extend({
 
 });
 
-approvalApp.ChatterFeedItemCollection = Backbone.Collection.extend({
+itbmobile.ChatterFeedItemCollection = Backbone.Collection.extend({
 
-    model: approvalApp.ChatterFeedItem,
+    model: itbmobile.ChatterFeedItem,
     
     myNewsFeedItems: function(options) {
         options = options ? _.clone(options) : {};
         var self = this;
         var data = options.data ? options.data : {};
         
-        forcetkClient.ajax('/' + apiVersion + '/chatter/feeds/news/me/feed-items', function(items) {
+        client.ajax('/' + apiVersion + '/chatter/feeds/news/me/feed-items', function(items) {
 	        if (options.reset) {
 	            self.reset();
 	        }
 	        for (var i = 0; i < items.items.length; i++) {
-	            var item = new approvalApp.ChatterFeedItem(items.items[i]);
+	            var item = new itbmobile.ChatterFeedItem(items.items[i]);
 	            self.push(item);
 	        }
 	        if (options.success) {
@@ -97,13 +97,13 @@ approvalApp.ChatterFeedItemCollection = Backbone.Collection.extend({
         var self = this;
         var data = options.data ? options.data : {};
         
-        forcetkClient.ajax('/' + apiVersion + '/chatter/feeds/to/me/feed-items', function(items) {
+        client.ajax('/' + apiVersion + '/chatter/feeds/to/me/feed-items', function(items) {
 	        //console.log(feedItems);
 	        if (options.reset) {
 	            self.reset();
 	        }
 	        for (var i = 0; i < items.items.length; i++) {
-	            var item = new approvalApp.ChatterFeedItem(items.items[i]);
+	            var item = new itbmobile.ChatterFeedItem(items.items[i]);
 	            self.push(item);
 	        }
 	        if (options.success) {
@@ -117,13 +117,13 @@ approvalApp.ChatterFeedItemCollection = Backbone.Collection.extend({
         var self = this;
         var data = options.data ? options.data : {};
         
-        forcetkClient.ajax('/' + apiVersion + '/chatter/feeds/bookmarks/me/feed-items', function(items) {
+        client.ajax('/' + apiVersion + '/chatter/feeds/bookmarks/me/feed-items', function(items) {
 	        //console.log(feedItems);
 	        if (options.reset) {
 	            self.reset();
 	        }
 	        for (var i = 0; i < items.items.length; i++) {
-	            var item = new approvalApp.ChatterFeedItem(items.items[i]);
+	            var item = new itbmobile.ChatterFeedItem(items.items[i]);
 	            self.push(item);
 	        }
 	        if (options.success) {
@@ -137,13 +137,13 @@ approvalApp.ChatterFeedItemCollection = Backbone.Collection.extend({
         var self = this;
         var data = options.data ? options.data : {};
         
-        forcetkClient.ajax('/' + apiVersion + '/chatter/feeds/record/' + data.id + '/feed-items', function(items) {
+        client.ajax('/' + apiVersion + '/chatter/feeds/record/' + data.id + '/feed-items', function(items) {
 	        //console.log(feedItems);
 	        if (options.reset) {
 	            self.reset();
 	        }
 	        for (var i = 0; i < items.items.length; i++) {
-	            var item = new approvalApp.ChatterFeedItem(items.items[i]);
+	            var item = new itbmobile.ChatterFeedItem(items.items[i]);
 	            self.push(item);
 	        }
 	        if (options.success) {
@@ -155,26 +155,26 @@ approvalApp.ChatterFeedItemCollection = Backbone.Collection.extend({
 });
 
 //Chatter Group Items
-approvalApp.ChatterGroupItem = Backbone.Model.extend({
+itbmobile.ChatterGroupItem = Backbone.Model.extend({
 
 });
 
-approvalApp.ChatterGroupItemCollection = Backbone.Collection.extend({
+itbmobile.ChatterGroupItemCollection = Backbone.Collection.extend({
 
-    model: approvalApp.ChatterGroupItem,
+    model: itbmobile.ChatterGroupItem,
     
     allGroupItems: function(options) {
         options = options ? _.clone(options) : {};
         var self = this;
         var data = options.data ? options.data : {};
         
-        forcetkClient.ajax('/' + apiVersion + '/chatter/groups', function(items) {
+        client.ajax('/' + apiVersion + '/chatter/groups', function(items) {
 	        //console.log(feedItems);
 	        if (options.reset) {
 	            self.reset();
 	        }
 	        for (var i = 0; i < items.groups.length; i++) {
-	            var item = new approvalApp.ChatterGroupItem(items.groups[i]);
+	            var item = new itbmobile.ChatterGroupItem(items.groups[i]);
 	            self.push(item);
 	        }
 	        if (options.success) {

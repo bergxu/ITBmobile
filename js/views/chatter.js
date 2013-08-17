@@ -1,8 +1,8 @@
-approvalApp.ChatterMeView = approvalApp.BaseView.extend({
+itbmobile.ChatterMeView = itbmobile.BaseView.extend({
     
 });
 
-approvalApp.ChatterNewPostView = approvalApp.BaseView.extend({
+itbmobile.ChatterNewPostView = itbmobile.BaseView.extend({
 
 	events: {
 		"click #saveBtn": "save"
@@ -16,7 +16,7 @@ approvalApp.ChatterNewPostView = approvalApp.BaseView.extend({
 	    			body: $("#newPostBody").val()
 	    		}, 
 	    		success: function(feedItem) {
-		    		approvalApp.router.navigate(self.model.get("retUrl"), {trigger: true});
+		    		itbmobile.router.navigate(self.model.get("retUrl"), {trigger: true});
 		    	}
 	    	});
     	}
@@ -26,7 +26,7 @@ approvalApp.ChatterNewPostView = approvalApp.BaseView.extend({
 	    			body: $("#newPostBody").val()
 	    		}, 
 	    		success: function(feedItem) {
-		    		approvalApp.router.navigate("chatterHome", {trigger: true});
+		    		itbmobile.router.navigate("chatterHome", {trigger: true});
 		    	}
 	    	});
     	}
@@ -34,7 +34,7 @@ approvalApp.ChatterNewPostView = approvalApp.BaseView.extend({
     
 });
 
-approvalApp.ChatterHomeView = approvalApp.ScorllableListView.extend({
+itbmobile.ChatterHomeView = itbmobile.ScorllableListView.extend({
 
 	wrapperId: "feedItemListWrapper",
 
@@ -45,17 +45,17 @@ approvalApp.ChatterHomeView = approvalApp.ScorllableListView.extend({
     initialize: function() {
     	var self = this;
         this.model.on("change", this.render, this);
-        this.items = new approvalApp.ChatterFeedItemCollection();
+        this.items = new itbmobile.ChatterFeedItemCollection();
         this.items.on("reset", this.reset, this);
         this.items.on("add", function(item) {
-            $(self.getItemListWrapperBodySelector(item), self.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
+            $(self.getItemListWrapperBodySelector(item), self.el).append(new itbmobile.ChatterFeedItemView({model: item}).render().el);
         });
     },
 
     render: function() {
         this.$el.html(this.template(this.model.attributes));
         _.each(this.items.models, function(item) {
-            $(this.getItemListWrapperBodySelector(item), this.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
+            $(this.getItemListWrapperBodySelector(item), this.el).append(new itbmobile.ChatterFeedItemView({model: item}).render().el);
         }, this);
         return this;
     },
@@ -87,13 +87,13 @@ approvalApp.ChatterHomeView = approvalApp.ScorllableListView.extend({
 	
 /*
 	showDetail: function(e) {
-		approvalApp.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
+		itbmobile.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
 	}
 */
     
 });
 
-approvalApp.ChatterAtMeView = approvalApp.ScorllableListView.extend({
+itbmobile.ChatterAtMeView = itbmobile.ScorllableListView.extend({
 
 	wrapperId: "feedItemListWrapper",
 
@@ -104,17 +104,17 @@ approvalApp.ChatterAtMeView = approvalApp.ScorllableListView.extend({
     initialize: function() {
     	var self = this;
         this.model.on("change", this.render, this);
-        this.items = new approvalApp.ChatterFeedItemCollection();
+        this.items = new itbmobile.ChatterFeedItemCollection();
         this.items.on("reset", this.reset, this);
         this.items.on("add", function(item) {
-            $(self.getItemListWrapperBodySelector(item), self.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
+            $(self.getItemListWrapperBodySelector(item), self.el).append(new itbmobile.ChatterFeedItemView({model: item}).render().el);
         });
     },
 
     render: function() {
         this.$el.html(this.template(this.model.attributes));
         _.each(this.items.models, function(item) {
-            $(this.getItemListWrapperBodySelector(item), this.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
+            $(this.getItemListWrapperBodySelector(item), this.el).append(new itbmobile.ChatterFeedItemView({model: item}).render().el);
         }, this);
         return this;
     },
@@ -146,13 +146,13 @@ approvalApp.ChatterAtMeView = approvalApp.ScorllableListView.extend({
 	
 /*
 	showDetail: function(e) {
-		approvalApp.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
+		itbmobile.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
 	}
 */
     
 });
 
-approvalApp.ChatterBookmarkView = approvalApp.ScorllableListView.extend({
+itbmobile.ChatterBookmarkView = itbmobile.ScorllableListView.extend({
 
 	wrapperId: "feedItemListWrapper",
 
@@ -163,17 +163,17 @@ approvalApp.ChatterBookmarkView = approvalApp.ScorllableListView.extend({
     initialize: function() {
     	var self = this;
         this.model.on("change", this.render, this);
-        this.items = new approvalApp.ChatterFeedItemCollection();
+        this.items = new itbmobile.ChatterFeedItemCollection();
         this.items.on("reset", this.reset, this);
         this.items.on("add", function(item) {
-            $(self.getItemListWrapperBodySelector(item), self.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
+            $(self.getItemListWrapperBodySelector(item), self.el).append(new itbmobile.ChatterFeedItemView({model: item}).render().el);
         });
     },
 
     render: function() {
         this.$el.html(this.template(this.model.attributes));
         _.each(this.items.models, function(item) {
-            $(this.getItemListWrapperBodySelector(item), this.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
+            $(this.getItemListWrapperBodySelector(item), this.el).append(new itbmobile.ChatterFeedItemView({model: item}).render().el);
         }, this);
         return this;
     },
@@ -205,14 +205,14 @@ approvalApp.ChatterBookmarkView = approvalApp.ScorllableListView.extend({
 	
 /*
 	showDetail: function(e) {
-		approvalApp.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
+		itbmobile.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
 	}
 */
     
 });
 
 //Chatter Groups
-approvalApp.ChatterGroupView = approvalApp.ScorllableListView.extend({
+itbmobile.ChatterGroupView = itbmobile.ScorllableListView.extend({
 
 	wrapperId: "groupItemListWrapper",
 
@@ -223,17 +223,17 @@ approvalApp.ChatterGroupView = approvalApp.ScorllableListView.extend({
     initialize: function() {
     	var self = this;
         this.model.on("change", this.render, this);
-        this.items = new approvalApp.ChatterGroupItemCollection();
+        this.items = new itbmobile.ChatterGroupItemCollection();
         this.items.on("reset", this.reset, this);
         this.items.on("add", function(item) {
-            $(self.getItemListWrapperBodySelector(item), self.el).append(new approvalApp.ChatterGroupItemView({model: item}).render().el);
+            $(self.getItemListWrapperBodySelector(item), self.el).append(new itbmobile.ChatterGroupItemView({model: item}).render().el);
         });
     },
 
     render: function() {
         this.$el.html(this.template(this.model.attributes));
         _.each(this.items.models, function(item) {
-            $(this.getItemListWrapperBodySelector(item), this.el).append(new approvalApp.ChatterGroupItemView({model: item}).render().el);
+            $(this.getItemListWrapperBodySelector(item), this.el).append(new itbmobile.ChatterGroupItemView({model: item}).render().el);
         }, this);
         return this;
     },
@@ -264,19 +264,19 @@ approvalApp.ChatterGroupView = approvalApp.ScorllableListView.extend({
 */
 	
 	showFeeds: function(e) {
-		approvalApp.router.navigate("chatterGroup/" + $(e.currentTarget).data("approvalItemid") +"/feeds", {trigger: true});
+		itbmobile.router.navigate("chatterGroup/" + $(e.currentTarget).data("approvalItemid") +"/feeds", {trigger: true});
 	}
     
 });
 
-approvalApp.ChatterGroupItemView = approvalApp.ItemView.extend({
+itbmobile.ChatterGroupItemView = itbmobile.ItemView.extend({
 
 	el: function() {
 		return "<tr data-approval-itemid='" + this.model.get("id") + "'></tr>";
 	}
 });
 
-approvalApp.ChatterGroupFeedsView = approvalApp.ScorllableListView.extend({
+itbmobile.ChatterGroupFeedsView = itbmobile.ScorllableListView.extend({
 
 	wrapperId: "feedItemListWrapper",
 
@@ -287,17 +287,17 @@ approvalApp.ChatterGroupFeedsView = approvalApp.ScorllableListView.extend({
     initialize: function() {
     	var self = this;
         this.model.on("change", this.render, this);
-        this.items = new approvalApp.ChatterFeedItemCollection();
+        this.items = new itbmobile.ChatterFeedItemCollection();
         this.items.on("reset", this.reset, this);
         this.items.on("add", function(item) {
-            $(self.getItemListWrapperBodySelector(item), self.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
+            $(self.getItemListWrapperBodySelector(item), self.el).append(new itbmobile.ChatterFeedItemView({model: item}).render().el);
         });
     },
 
     render: function() {
         this.$el.html(this.template(this.model.attributes));
         _.each(this.items.models, function(item) {
-            $(this.getItemListWrapperBodySelector(item), this.el).append(new approvalApp.ChatterFeedItemView({model: item}).render().el);
+            $(this.getItemListWrapperBodySelector(item), this.el).append(new itbmobile.ChatterFeedItemView({model: item}).render().el);
         }, this);
         return this;
     },
@@ -329,13 +329,13 @@ approvalApp.ChatterGroupFeedsView = approvalApp.ScorllableListView.extend({
 	
 /*
 	showDetail: function(e) {
-		approvalApp.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
+		itbmobile.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
 	}
 */
     
 });
 
-approvalApp.ChatterFeedItemView = approvalApp.ItemView.extend({
+itbmobile.ChatterFeedItemView = itbmobile.ItemView.extend({
 
 	el: function() {
 		return "<tr data-approval-itemid='" + this.model.get("id") + "'></tr>";
@@ -344,7 +344,7 @@ approvalApp.ChatterFeedItemView = approvalApp.ItemView.extend({
 });
 
 //Chatter Users
-approvalApp.ChatterUserView = approvalApp.ScorllableListView.extend({
+itbmobile.ChatterUserView = itbmobile.ScorllableListView.extend({
 
 	wrapperId: "userItemListWrapper",
 
@@ -355,17 +355,17 @@ approvalApp.ChatterUserView = approvalApp.ScorllableListView.extend({
     initialize: function() {
     	var self = this;
         this.model.on("change", this.render, this);
-        this.items = new approvalApp.UserCollection();
+        this.items = new itbmobile.UserCollection();
         this.items.on("reset", this.reset, this);
         this.items.on("add", function(item) {
-            $(self.getItemListWrapperBodySelector(item), self.el).append(new approvalApp.ChatterUserItemView({model: item}).render().el);
+            $(self.getItemListWrapperBodySelector(item), self.el).append(new itbmobile.ChatterUserItemView({model: item}).render().el);
         });
     },
 
     render: function() {
         this.$el.html(this.template(this.model.attributes));
         _.each(this.items.models, function(item) {
-            $(this.getItemListWrapperBodySelector(item), this.el).append(new approvalApp.ChatterUserItemView({model: item}).render().el);
+            $(this.getItemListWrapperBodySelector(item), this.el).append(new itbmobile.ChatterUserItemView({model: item}).render().el);
         }, this);
         return this;
     },
@@ -397,13 +397,13 @@ approvalApp.ChatterUserView = approvalApp.ScorllableListView.extend({
 	
 /*
 	showDetail: function(e) {
-		approvalApp.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
+		itbmobile.router.navigate("news/detail/" + $(e.currentTarget).data("approvalItemid"), {trigger: true});
 	}
 */
     
 });
 
-approvalApp.ChatterUserItemView = approvalApp.ItemView.extend({
+itbmobile.ChatterUserItemView = itbmobile.ItemView.extend({
 
 	el: function() {
 		return "<tr data-approval-itemid='" + this.model.get("id") + "'></tr>";

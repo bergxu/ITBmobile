@@ -27,10 +27,21 @@ itbmobile.Router = Backbone.Router.extend({
 
     routes: {
         "":                 "home",
-		"home":             "home",
-		"chatter":          "chatter",
-		"timer":            "timer",
-		"setup":            "setup"
+        "home":             "home",
+        "timer":            "timer",
+        "chatter":                       "chatterHome", 
+        "chatterHome":                   "chatterHome", 
+        "chatterAtMe":                   "chatterAtMe", 
+        "chatterBookmark":               "chatterBookmark", 
+        "chatterMe":                     "chatterMe", 
+        "chatterGroup":                  "chatterGroup", 
+        "chatterGroup/:id/feeds":        "chatterGroupFeeds", 
+        "chatterGroup/:id":              "chatterGroupDetail", 
+        "chatterUser":                   "chatterUser", 
+        "chatterNewPost":                "chatterNewPost", 
+        "chatterNewPost/group/:id":      "chatterNewPostGroup", 
+        "chatterNewPost/news/:id":       "chatterNewPostNews", 
+        "setup":            "setup"
     },
 
     initialize: function () {
@@ -58,16 +69,106 @@ itbmobile.Router = Backbone.Router.extend({
         }
     },
 
-    chatter: function () {
-        /*if (!itbmobile.chatterView) {
-            itbmobile.chatterView = new itbmobile.ChatterView();
-            itbmobile.chatterView.render();
-            this.$content.html(itbmobile.chatterView.el);
+    chatterHome: function() {
+        if (!itbmobile.chatterHomeView) {
+            itbmobile.chatterHomeView = new itbmobile.ChatterHomeView({model: itbmobile.currentUser});
+            itbmobile.chatterHomeView.render();
+            this.$content.html(itbmobile.chatterHomeView.el);
+            itbmobile.chatterHomeView.loadData();
         } else {
-            console.log('reusing chatter view');
-            this.$content.html(itbmobile.chatterView.el);
-            itbmobile.chatterView.delegateEvents();
-        }*/
+            console.log('reusing chatter home view');
+            this.$content.html(itbmobile.chatterHomeView.el);
+            itbmobile.chatterHomeView.delegateEvents();
+        }
+    },
+
+    chatterAtMe: function() {
+        if (!itbmobile.chatterAtMeView) {
+            itbmobile.chatterAtMeView = new itbmobile.ChatterAtMeView({model: itbmobile.currentUser});
+            itbmobile.chatterAtMeView.render();
+            this.$content.html(itbmobile.chatterAtMeView.el);
+            itbmobile.chatterAtMeView.loadData();
+        } else {
+            console.log('reusing chatter at me view');
+            this.$content.html(itbmobile.chatterAtMeView.el);
+            itbmobile.chatterAtMeView.delegateEvents();
+        }
+    },
+
+    chatterBookmark: function() {
+        if (!itbmobile.chatterBookmarkView) {
+            itbmobile.chatterBookmarkView = new itbmobile.ChatterBookmarkView({model: itbmobile.currentUser});
+            itbmobile.chatterBookmarkView.render();
+            this.$content.html(itbmobile.chatterBookmarkView.el);
+            itbmobile.chatterBookmarkView.loadData();
+        } else {
+            console.log('reusing chatter bookmark view');
+            this.$content.html(itbmobile.chatterBookmarkView.el);
+            itbmobile.chatterBookmarkView.delegateEvents();
+        }
+    },
+
+    chatterMe: function() {
+        if (!itbmobile.chatterMeView) {
+            itbmobile.chatterMeView = new itbmobile.ChatterMeView({model: itbmobile.currentUser});
+            itbmobile.chatterMeView.render();
+            this.$content.html(itbmobile.chatterMeView.el);
+        } else {
+            console.log('reusing chatter me view');
+            this.$content.html(itbmobile.chatterMeView.el);
+            itbmobile.chatterMeView.delegateEvents();
+        }
+    },
+
+    chatterGroup: function() {
+        if (!itbmobile.chatterGroupView) {
+            itbmobile.chatterGroupView = new itbmobile.ChatterGroupView({model: itbmobile.currentUser});
+            itbmobile.chatterGroupView.render();
+            this.$content.html(itbmobile.chatterGroupView.el);
+            itbmobile.chatterGroupView.loadData();
+        } else {
+            console.log('reusing chatter group view');
+            this.$content.html(itbmobile.chatterGroupView.el);
+            itbmobile.chatterGroupView.delegateEvents();
+        }
+    },
+
+    chatterGroupFeeds: function(pid) {
+        itbmobile.chatterGroupFeedsView = new itbmobile.ChatterGroupFeedsView({model: new itbmobile.ChatterGroupItem({id:pid})});
+        itbmobile.chatterGroupFeedsView.render();
+        this.$content.html(itbmobile.chatterGroupFeedsView.el);
+        itbmobile.chatterGroupFeedsView.loadData();
+    },
+
+    chatterUser: function() {
+        if (!itbmobile.chatterUserView) {
+            itbmobile.chatterUserView = new itbmobile.ChatterUserView({model: itbmobile.currentUser});
+            itbmobile.chatterUserView.render();
+            this.$content.html(itbmobile.chatterUserView.el);
+            itbmobile.chatterUserView.loadData();
+        } else {
+            console.log('reusing chatter group view');
+            this.$content.html(itbmobile.chatterUserView.el);
+            itbmobile.chatterUserView.delegateEvents();
+        }
+    },
+
+    chatterNewPost: function() {
+        itbmobile.chatterNewPostView = new itbmobile.ChatterNewPostView({model: new itbmobile.ChatterNewPost({retUrl:"chatterHome"})});
+        itbmobile.chatterNewPostView.render();
+        this.$content.html(itbmobile.chatterNewPostView.el);
+    },
+    
+    chatterNewPostGroup: function(pid) {
+        itbmobile.chatterNewPostView = new itbmobile.ChatterNewPostView({model: new itbmobile.ChatterNewPost({id:pid, type:"record", retUrl:"chatterGroup/" + pid + "/feeds"})});
+        itbmobile.chatterNewPostView.render();
+        this.$content.html(itbmobile.chatterNewPostView.el);
+    },
+    
+    chatterNewPostNews: function(pid) {
+        itbmobile.chatterNewPostView = new itbmobile.ChatterNewPostView({model: new itbmobile.ChatterNewPost({id:pid, type:"record", retUrl:"news/" + pid + "/feeds"})});
+        itbmobile.chatterNewPostView.render();
+        this.$content.html(itbmobile.chatterNewPostView.el);
     },
 
     timer: function () {
@@ -146,7 +247,7 @@ $(document).on("ready", function () {
                 if (itbmobile.currentUser != null && itbmobile.currentUser.id != null) {
                     itbmobile.currentResource.fetchByOwner({data: {ownerId: itbmobile.currentUser.get("id")}, success: function() {
                     itbmobile.currentUser.set({resourceId: itbmobile.currentResource.get("Id")});
-					  itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "ChatterView", "TimerView", "SetupView","ChatterHeaderView","ChatterCommentView","EngagementListView", "TimecardItemView", "TimecardListView", "TimeEntryItemView", "TimeEntryListView"], function () {
+					  itbmobile.loadTemplates(["ShellView", "HomeView", "HomeHeaderView", "HomeVacationView", "HomeTaskListView", "HomeTaskListItemView", "TimerView", "SetupView","EngagementListView", "TimerHeaderView", "TimecardItemView", "TimecardListView", "TimeEntryItemView", "TimeEntryListView","ChatterHomeView", "ChatterAtMeView", "ChatterBookmarkView", "ChatterMeView", "ChatterFeedItemView", "ChatterGroupView", "ChatterGroupItemView", "ChatterGroupFeedsView", "ChatterUserView", "ChatterUserItemView", "ChatterNewPostView"], function () {
                                                  itbmobile.router = new itbmobile.Router();
                                                   Backbone.history.start();
                                                   });
